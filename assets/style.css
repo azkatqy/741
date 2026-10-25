@@ -268,3 +268,5 @@ details.qa p:last-child { margin-bottom: 0; }
   .kv { grid-template-columns: 1fr; gap: .1rem; }
   .kv dd { margin-bottom: .5rem; }
 }
+.qa-grp { margin: 1.6rem 0 .5rem; font-size: 1rem; color: var(--accent); }
+details.qa.acak { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }

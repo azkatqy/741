@@ -77,6 +77,13 @@
       <a href="#edge">Komputasi tepi</a>
       <div class="grp">H. Latihan sidang</div>
       <a href="#latihan">Pertanyaan dan jawaban</a>
+      <a href="#latihan-1">· Latar belakang dan kontribusi</a>
+      <a href="#latihan-2">· Metode dan desain sistem</a>
+      <a href="#latihan-3">· Agen percakapan dan LLM</a>
+      <a href="#latihan-4">· VLM dan deteksi</a>
+      <a href="#latihan-5">· Integrasi kendaraan</a>
+      <a href="#latihan-6">· Evaluasi dan hasil</a>
+      <a href="#latihan-7">· Keterbatasan dan pengembangan</a>
     </nav>
 
     <div>
@@ -443,57 +450,125 @@
       <!-- H -->
       <section class="bab" id="latihan">
         <h2><span class="no">H</span> Latihan pertanyaan sidang</h2>
-        <p>Coba jawab sendiri dulu, lalu buka jawabannya.</p>
+        <p>43 pertanyaan dalam 7 kelompok. Coba jawab sendiri dulu, lalu buka jawabannya. Tombol "Pertanyaan acak" memilih satu pertanyaan untuk latihan.</p>
         <div class="qa-tools">
+          <button class="btn" type="button" data-qa="acak">Pertanyaan acak</button>
           <button class="btn" type="button" data-qa="buka">Buka semua jawaban</button>
           <button class="btn" type="button" data-qa="tutup">Tutup semua</button>
         </div>
-
+        <h3 class="qa-grp" id="latihan-1">Latar belakang dan kontribusi</h3>
         <details class="qa"><summary>Seberapa penting penelitian ini? Penumpang bisa menemukan mobilnya sendiri.</summary>
           <p>Masalahnya arah sebaliknya: kendaraan belum tahu siapa penumpangnya. Pada taksi berpengemudi, pengemudi dan penumpang saling mengenali lewat telepon dan isyarat tangan [Meister 2026]. Saluran itu hilang pada layanan tanpa pengemudi, dan pengguna melaporkan kendaraan bisa melewati mereka [Deng 2026]. Untuk ITS, kontribusi pertama adalah aplikasi penghubung itu sendiri, yang belum ada pada penelitian navigasi dan kendali sebelumnya.</p></details>
-
-        <details class="qa"><summary>Mengapa perlu VLM? Kendaraan cukup mengirim foto "saya di sini".</summary>
-          <p>Cara itu sudah ada sebagai jalur cadangan: penumpang bisa meminta foto dan memilih nomornya sendiri. VLM menambah tiga hal: penumpang cukup menjawab ya atau tidak pada satu kotak, sistem tahu orang mana yang berhak naik, dan pencocokan berjalan saat penumpang tidak melihat ponsel. Perbandingan kedua mode bisa diukur dengan waktu sampai terkonfirmasi dan tingkat keberhasilan.</p></details>
-
-        <details class="qa"><summary>Bagaimana jika penumpang tidak terlihat di kamera?</summary>
-          <p>Kendaraan berhenti di titik jemput, bukan melintas. Bila VLM tidak menemukan kandidat selama 30 detik, status berubah menjadi butuh ciri tambahan dan agen menanyakan ciri pembeda atau meminta penumpang mendekat. Penumpang juga bisa meminta foto untuk melihat apakah dirinya terlihat. Batasannya, tidak ada kamera belakang dan GPS tanpa RTK bisa meleset beberapa meter, sehingga area tunggu titik jemput dipilih dalam jangkauan kamera.</p></details>
-
-        <details class="qa"><summary>Kalau ada dua mobil yang mirip, bukankah VLM jadi tidak berguna?</summary>
-          <p>VLM tidak dimaksudkan membantu penumpang memilih mobil. Yang dicegah adalah orang yang salah dianggap penumpang. Penumpang tetap mengenali kendaraan dari peta, plat, dan warna. Lagi pula, penelitian ini memakai satu kendaraan riset, sehingga skenario dua mobil berada di luar cakupan.</p></details>
-
-        <details class="qa"><summary>Mengapa YOLO hanya mendeteksi orang, tidak langsung mencari "baju merah"?</summary>
-          <p>Pada uji pendahuluan, kalimat deskripsi utuh sebagai kelas YOLO-World hanya mencapai akurasi 56,0% dengan recall 16,0%. Potongan atribut hanya bisa menguji 27 dari 50 kalimat karena bergantung pada daftar kata kunci. YOLO kelas orang ditambah VLM mencapai 92,0% dan bisa menguji semua kalimat.</p></details>
-
+        <details class="qa"><summary>Apa kontribusi utama penelitian ini?</summary>
+          <p>Ada tiga. Pertama, aplikasi penghubung pemesanan sampai penjemputan untuk mobil riset otonom ITS, yang terhubung ke navigasi dan kendali melalui ROS 2. Kedua, alur validasi penumpang yang menggabungkan percakapan untuk melengkapi ciri, penyaring halusinasi, pencocokan VLM atas semua kandidat bernomor, dan konfirmasi foto bukti. Ketiga, evaluasi alur tersebut pada sistem lengkap, sebagai pelengkap evaluasi metode sebelumnya yang dilakukan pada dataset.</p></details>
+        <details class="qa"><summary>Mengapa tidak memakai aplikasi ride-hailing yang sudah ada?</summary>
+          <p>Aplikasi komersial tidak bisa dihubungkan ke ROS 2 pada kendaraan riset, tidak memiliki tahap validasi visual penumpang, dan tidak memberi akses ke status serta data yang dibutuhkan untuk evaluasi. Penelitian ini membutuhkan kendali penuh atas alur status, protokol ke kendaraan, dan pencatatan setiap hasil VLM.</p></details>
+        <details class="qa"><summary>Mengapa tidak cukup memakai lokasi GPS ponsel penumpang?</summary>
+          <p>GPS ponsel bisa meleset beberapa meter, terutama di dekat gedung, dan tidak bisa membedakan orang yang berdiri berdekatan. Pendekatan berbasis sinyal nirkabel mengukur jarak perangkat ke kendaraan, tetapi tidak menunjukkan orang mana yang merupakan penumpang [Lee 2023]. Lokasi tetap dipakai untuk memilih titik jemput, lalu kamera dan VLM menangani tahap terakhir.</p></details>
+        <details class="qa"><summary>Mengapa titik jemput tetap, bukan lokasi bebas seperti ojek daring?</summary>
+          <p>Kendaraan hanya bisa melewati jalan yang sudah disiapkan sebagai segmen titik acuan GPS secara luring [Priyatna 2026]. Titik jemput tetap memastikan lokasinya berada pada segmen tersebut, punya patokan yang mudah disebut, dan area tunggunya bisa dipilih agar terlihat oleh kamera. Titik jemput dinamis dicatat sebagai pengembangan lanjutan.</p></details>
         <details class="qa"><summary>Apa bedanya penelitian ini dengan Wu et al.?</summary>
           <p>Wu et al. memilih kandidat dengan kemiripan kosinus antardeskripsi, yang gagal saat kandidat mirip sebagian. Penelitian ini meminta VLM menalar semua kandidat bernomor sekaligus, menambahkan percakapan untuk melengkapi ciri, penyaring halusinasi, dan konfirmasi foto bukti. Evaluasinya pada alur sistem lengkap dengan kendaraan, bukan hanya pada dataset.</p></details>
-
-        <details class="qa"><summary>Bagaimana mencegah LLM mengarang ciri penumpang?</summary>
-          <p>Ada dua lapis. Instruksi agen meminta memakai kata penumpang apa adanya. Server lalu memeriksa setiap kata isi pada nilai ciri. Bila ada kata yang tidak pernah diucapkan penumpang, nilai itu dibuang. Keluaran terstruktur membuat pemeriksaan ini bisa dilakukan per kolom.</p></details>
-
-        <details class="qa"><summary>Mengapa memakai mode masking?</summary>
-          <p>Satu panggilan untuk semua kandidat, sehingga jumlah panggilan dan token berkurang sekitar 70% pada uji pendahuluan. Posisi relatif kandidat tetap terlihat, dan latar yang tidak relevan dihitamkan. Bila penumpang menyebut posisi terhadap objek tertentu, sistem memakai bingkai penuh agar objek itu terlihat.</p></details>
-
-        <details class="qa"><summary>Bagaimana kendaraan tahu sudah tiba, dan mengapa harus berhenti dulu?</summary>
-          <p>Posisi dari Kalman Filter dikonversi ke lintang dan bujur, lalu dihitung jarak haversine ke titik jemput. Bila di bawah radius kedatangan, kendaraan dihentikan dengan kecepatan target nol. Deteksi baru dijalankan setelah itu agar citra tidak kabur dan posisi orang tidak berubah di antara dua panggilan VLM.</p></details>
-
         <details class="qa"><summary>Apakah ini termasuk penelitian interaksi manusia-robot?</summary>
           <p>Tidak. Penelitian ini mengukur kinerja sistem: kelengkapan ciri, halusinasi, ketepatan pencocokan, latensi, dan keberhasilan alur. Skenario diperankan secara terskrip, dan tidak ada studi kegunaan, kepuasan, atau kepercayaan pengguna. Konfirmasi foto adalah langkah verifikasi dalam alur sistem.</p></details>
-
-        <details class="qa"><summary>Bagaimana dengan privasi orang di sekitar kendaraan?</summary>
-          <p>Sistem tidak memakai pengenalan wajah atau biometrik, hanya pakaian, aksesori, dan posisi. Validasi berfungsi sebagai pendukung penjemputan, bukan autentikasi. Citra hanya dikirim saat kendaraan sudah tiba dan ada orang terdeteksi, dan pengiriman berhenti setelah pesanan selesai.</p></details>
-
+        <h3 class="qa-grp" id="latihan-2">Metode dan desain sistem</h3>
+        <details class="qa"><summary>Mengapa memakai Iterative Prototyping, bukan Waterfall atau Scrum?</summary>
+          <p>Perilaku LLM dan VLM baru terlihat setelah dicoba, sehingga kebutuhan tidak bisa dikunci di awal seperti pada Waterfall. Scrum mengatur kerja tim dengan peran dan sprint, sedangkan penelitian ini dikerjakan satu orang. Iterative Prototyping memberi siklus bangun, uji, dan perbaiki yang sesuai [Pressman 2020].</p></details>
+        <details class="qa"><summary>Mengapa FastAPI?</summary>
+          <p>FastAPI mendukung REST dan WebSocket secara asinkron dalam satu kerangka, sehingga banyak koneksi bisa dilayani tanpa memblokir saat menunggu jawaban model. Bahasanya Python, sama dengan ekosistem OpenCV, YOLO, dan klien model yang dipakai.</p></details>
+        <details class="qa"><summary>Mengapa WebSocket, bukan HTTP polling atau MQTT?</summary>
+          <p>Polling membuat klien bertanya berulang kali walaupun tidak ada perubahan, sehingga boros dan lambat. WebSocket memungkinkan server mengirim status dan pesan agen saat itu juga. MQTT juga cocok untuk robotika, tetapi membutuhkan <em>broker</em> tambahan, sedangkan WebSocket berjalan langsung di server yang sama dengan REST.</p></details>
+        <details class="qa"><summary>Apa yang terjadi bila koneksi kendaraan terputus?</summary>
+          <p>Kendaraan mengirim sinyal detak setiap 2 detik. Bila berhenti, status kendaraan menjadi offline. Bila offline lebih dari 120 detik saat ada pesanan aktif, pesanan dinyatakan gagal dan penumpang diberi tahu, sehingga pesanan tidak menggantung.</p></details>
+        <details class="qa"><summary>Mengapa setiap status punya batas waktu?</summary>
+          <p>Agar pesanan tidak tertahan selamanya. Contohnya, kendaraan harus merespons perintah jemput dalam 60 detik, ciri harus lengkap dalam 300 detik setelah kendaraan tiba, dan pencarian dibatasi 300 detik. Patokan waktunya dibaca dari basis data, sehingga tetap berlaku setelah server dinyalakan ulang.</p></details>
+        <details class="qa"><summary>Bagaimana tiga kamera diproses?</summary>
+          <p>Hanya kamera yang mendeteksi orang yang diikutkan. Citra dari kamera-kamera itu digabung berdampingan dengan label nama kamera, dan setiap orang diberi nomor berurutan. Hasilnya satu citra, sehingga VLM cukup dipanggil sekali untuk semua kamera.</p></details>
+        <h3 class="qa-grp" id="latihan-3">Agen percakapan dan LLM</h3>
+        <details class="qa"><summary>Mengapa percakapan dengan LLM, bukan formulir isian?</summary>
+          <p>Ciri posisi seperti "duduk di bangku dekat pintu masuk" sulit diwakili pilihan formulir, dan penumpang sering mengoreksi atau menambah ciri secara bertahap. LLM menerima bahasa alami, sedangkan keluaran terstruktur dan penyaring halusinasi tetap menghasilkan data yang pasti seperti formulir.</p></details>
+        <details class="qa"><summary>Ciri apa yang wajib, dan mengapa itu?</summary>
+          <p>Pakaian atas beserta warnanya, dan posisi terhadap objek sekitar. Pakaian atas adalah area terbesar yang terlihat dari kamera. Posisi membantu membedakan orang yang berpakaian mirip dan menentukan apakah VLM perlu melihat bingkai penuh. Pakaian bawah dan aksesori menjadi ciri pendukung.</p></details>
+        <details class="qa"><summary>Bagaimana mencegah LLM mengarang ciri penumpang?</summary>
+          <p>Ada dua lapis. Instruksi agen meminta memakai kata penumpang apa adanya. Server lalu memeriksa setiap kata isi pada nilai ciri. Bila ada kata yang tidak pernah diucapkan penumpang, nilai itu dibuang. Keluaran terstruktur membuat pemeriksaan ini bisa dilakukan per kolom.</p></details>
+        <details class="qa"><summary>Bagaimana bila penumpang salah menyebut ciri atau berganti pakaian?</summary>
+          <p>Penumpang bisa mengoreksi lewat percakapan kapan saja, dan setiap perubahan ciri menaikkan nomor versi. Setiap hasil VLM mencatat versi ciri yang dipakai, sehingga hasil lama tidak tercampur. Bila foto bukti salah, jawaban "Bukan saya" membuat agen menanyakan ciri pembeda.</p></details>
+        <details class="qa"><summary>Mengapa temperature diatur 0,2?</summary>
+          <p>Temperature mengatur keacakan pemilihan token. Nilai rendah membuat jawaban lebih konsisten untuk masukan yang sama, yang penting untuk ekstraksi ciri dan keputusan VLM. Nilainya tidak nol agar balasan percakapan tetap wajar.</p></details>
+        <details class="qa"><summary>Bagaimana bila penumpang memakai bahasa daerah atau campuran?</summary>
+          <p>Batasan penelitian adalah Bahasa Indonesia. Model keluarga Gemini mungkin memahami campuran bahasa, tetapi tidak diuji. Selain itu, penyaring halusinasi berbasis kata bisa membuang ciri yang diucapkan dalam bahasa lain lalu dicatat dalam Bahasa Indonesia oleh model.</p></details>
+        <h3 class="qa-grp" id="latihan-4">VLM dan deteksi</h3>
+        <details class="qa"><summary>Mengapa perlu VLM? Kendaraan cukup mengirim foto "saya di sini".</summary>
+          <p>Cara itu sudah ada sebagai jalur cadangan: penumpang bisa meminta foto dan memilih nomornya sendiri. VLM menambah tiga hal: penumpang cukup menjawab ya atau tidak pada satu kotak, sistem tahu orang mana yang berhak naik, dan pencocokan berjalan saat penumpang tidak melihat ponsel. Perbandingan kedua mode bisa diukur dengan waktu sampai terkonfirmasi dan tingkat keberhasilan.</p></details>
+        <details class="qa"><summary>Mengapa YOLO hanya mendeteksi orang, tidak langsung mencari "baju merah"?</summary>
+          <p>Pada uji pendahuluan, kalimat deskripsi utuh sebagai kelas YOLO-World hanya mencapai akurasi 56,0% dengan recall 16,0%. Potongan atribut hanya bisa menguji 27 dari 50 kalimat karena bergantung pada daftar kata kunci. YOLO kelas orang ditambah VLM mencapai 92,0% dan bisa menguji semua kalimat.</p></details>
+        <details class="qa"><summary>Mengapa memakai mode masking?</summary>
+          <p>Satu panggilan untuk semua kandidat, sehingga jumlah panggilan dan token berkurang sekitar 70% pada uji pendahuluan. Posisi relatif kandidat tetap terlihat, dan latar yang tidak relevan dihitamkan. Bila penumpang menyebut posisi terhadap objek tertentu, sistem memakai bingkai penuh agar objek itu terlihat.</p></details>
+        <details class="qa"><summary>Bagaimana bila ada dua orang yang sama-sama cocok?</summary>
+          <p>Instruksi VLM meminta jawaban "ada" hanya bila tepat satu kandidat cocok dengan semua ciri. Bila lebih dari satu sama cocoknya, VLM menjawab "tidak" dan menyebutkan ciri yang sama di alasannya. Setelah 30 detik tanpa kepastian, agen menanyakan ciri pembeda kepada penumpang.</p></details>
+        <details class="qa"><summary>Bagaimana bila VLM menunjuk orang yang salah?</summary>
+          <p>Foto bukti dikonfirmasi penumpang lebih dulu. Bila penumpang menjawab "Bukan saya", kandidat itu tidak dikirim lagi ke VLM selama masih berdiri di tempat yang sama (tumpang tindih kotak ≥ 0,5). Bila ia berpindah, deskripsinya dikirim sebagai orang yang bukan penumpang, dan agen menanyakan ciri pembeda.</p></details>
+        <details class="qa"><summary>Mengapa VLM di cloud, bukan di komputer kendaraan?</summary>
+          <p>GPU kendaraan, RTX 4060 8 GB, sudah dipakai untuk segmentasi InternImage pada navigasi [Priyatna 2026]. VLM yang cukup kuat membutuhkan memori jauh lebih besar. Lapisan klien model di server memungkinkan penyedia diganti, termasuk ke model lokal di server, tanpa mengubah aplikasi maupun kendaraan. Konsekuensinya, sistem bergantung pada koneksi dan biaya per panggilan.</p></details>
+        <details class="qa"><summary>Berapa latensi VLM, dan apakah cukup?</summary>
+          <p>Pada uji prototipe dengan <code>gemini-3.1-flash-lite</code> melalui OpenRouter, median latensi sekitar 1,8 detik pada bingkai penuh dan 2,0 detik pada masking, dari 103 panggilan. Sistem tidak dirancang untuk operasi real-time kritis karena kendaraan sudah berhenti saat mencari. Jeda 3 detik dihitung sejak panggilan sebelumnya selesai, jadi panggilan tidak pernah menumpuk.</p></details>
+        <details class="qa"><summary>Berapa biaya pemanggilan VLM?</summary>
+          <p>Satu panggilan memakai sekitar 1.200 token, hampir tetap berapa pun ukuran citranya. Biaya ditekan dengan tiga cara: YOLO hanya meneruskan citra berisi orang, mode masking memproses semua kandidat dalam satu panggilan, dan pemanggilan berhenti setelah penumpang terkonfirmasi.</p></details>
+        <details class="qa"><summary>Bagaimana kinerja pada malam hari atau saat hujan?</summary>
+          <p>Belum diuji. Batasan penelitian adalah siang hari dan cuaca cerah, karena warna pakaian sulit dibedakan pada cahaya rendah, baik oleh YOLO maupun VLM. Pengujian pada kondisi tersebut termasuk pengembangan lanjutan.</p></details>
+        <h3 class="qa-grp" id="latihan-5">Integrasi kendaraan</h3>
+        <details class="qa"><summary>Apakah penelitian ini mengubah navigasi atau kendali kendaraan?</summary>
+          <p>Tidak. Sistem penjemputan hanya menetapkan destinasi, membaca posisi, dan meminta kendaraan berhenti melalui ROS 2. Algoritma segmentasi, Kalman Filter, perencanaan rute, dan kendali tetap milik penelitian sebelumnya [Priyatna 2026; Hafidzh 2026].</p></details>
+        <details class="qa"><summary>Bagaimana titik awal dan titik akhir rute ditentukan?</summary>
+          <p>Titik awal tidak dikirim. Perencana rute global mencocokkan posisi dan arah hadap kendaraan saat itu ke segmen terdekat. Titik akhir adalah koordinat titik jemput, yang dipetakan ke segmen terdekat, lalu Dijkstra mencari urutan segmen berbiaya terkecil.</p></details>
+        <details class="qa"><summary>Bagaimana kendaraan tahu sudah tiba, dan mengapa harus berhenti dulu?</summary>
+          <p>Posisi dari Kalman Filter dikonversi ke lintang dan bujur, lalu dihitung jarak haversine ke titik jemput. Bila di bawah radius kedatangan, kendaraan dihentikan dengan kecepatan target nol. Deteksi baru dijalankan setelah itu agar citra tidak kabur dan posisi orang tidak berubah di antara dua panggilan VLM.</p></details>
+        <details class="qa"><summary>Bagaimana bila penumpang tidak terlihat di kamera?</summary>
+          <p>Kendaraan berhenti di titik jemput, bukan melintas. Bila VLM tidak menemukan kandidat selama 30 detik, status berubah menjadi butuh ciri tambahan dan agen menanyakan ciri pembeda atau meminta penumpang mendekat. Penumpang juga bisa meminta foto untuk melihat apakah dirinya terlihat. Batasannya, tidak ada kamera belakang dan GPS tanpa RTK bisa meleset beberapa meter, sehingga area tunggu titik jemput dipilih dalam jangkauan kamera.</p></details>
+        <details class="qa"><summary>Apa risiko keselamatan dari perintah berhenti oleh sistem?</summary>
+          <p>Perintah berhenti menyentuh sistem kendali, sehingga salurannya harus disepakati dengan tim mobil riset sebelum uji lapangan. Pengujian tetap memakai pengemudi cadangan, dan kendaraan memiliki tombol darurat yang memberi kecepatan target nol [Hafidzh 2026]. Sistem penjemputan tidak pernah memerintahkan kendaraan bergerak selain melalui destinasi.</p></details>
+        <details class="qa"><summary>Sudahkah sistem diuji di mobil sungguhan?</summary>
+          <p>Belum secara penuh. Seluruh alur sudah berjalan dengan simulator kendaraan yang memakai protokol yang sama dengan <em>node</em> ROS 2. Deteksi orang sudah dicoba pada rekaman kamera mobil riset tanggal 17 Oktober 2026. Integrasi dan pengujian di kendaraan dijadwalkan pada iterasi berikutnya.</p></details>
+        <details class="qa"><summary>Kalau ada dua mobil yang mirip, bukankah VLM jadi tidak berguna?</summary>
+          <p>VLM tidak dimaksudkan membantu penumpang memilih mobil. Yang dicegah adalah orang yang salah dianggap penumpang. Penumpang tetap mengenali kendaraan dari peta, plat, dan warna. Lagi pula, penelitian ini memakai satu kendaraan riset, sehingga skenario dua mobil berada di luar cakupan.</p></details>
+        <h3 class="qa-grp" id="latihan-6">Evaluasi dan hasil</h3>
+        <details class="qa"><summary>Bagaimana mengetahui jawaban VLM benar atau salah?</summary>
+          <p>Skenario uji terskrip, sehingga penulis tahu siapa penumpangnya dan apa pakaiannya. Setiap hasil VLM tersimpan bersama citra bernomor, keputusan, dan alasannya, lalu diperiksa secara manual terhadap kebenaran tersebut.</p></details>
+        <details class="qa"><summary>Apakah 50 kalimat dan 5 citra uji sudah cukup?</summary>
+          <p>Belum untuk kesimpulan akhir. Itu adalah uji pendahuluan untuk memilih arsitektur, dan selisihnya cukup besar, yaitu akurasi 92,0% dibanding 56,0% dan 70,4%. Pengujian akhir akan memakai lebih banyak skenario, termasuk skenario orang berpenampilan mirip yang menjadi kelemahan utama metode sebelumnya.</p></details>
+        <details class="qa"><summary>Apa arti hasil 22 pesanan uji?</summary>
+          <p>Dari 22 pesanan pada uji fungsional 17 sampai 24 Oktober 2026, 10 selesai sampai penumpang naik, 6 dibatalkan, dan 6 gagal karena melewati batas waktu tahap. Ini adalah uji fungsional selama pengembangan, bukan evaluasi akhir. Kasus gagal dianalisis untuk memperbaiki aturan pada iterasi berikutnya.</p></details>
+        <details class="qa"><summary>Mengapa false positive lebih berbahaya daripada false negative?</summary>
+          <p>False positive berarti VLM menunjuk orang yang bukan penumpang, sehingga berisiko salah jemput. False negative hanya memperlambat, karena agen akan meminta ciri tambahan. Karena itu instruksi VLM dibuat ketat dan foto bukti tetap dikonfirmasi penumpang.</p></details>
+        <h3 class="qa-grp" id="latihan-7">Keterbatasan dan pengembangan</h3>
         <details class="qa"><summary>Apa kelemahan sistem ini?</summary>
           <p>Bergantung pada layanan model <em>cloud</em> dan koneksi jaringan. Ciri berbasis pakaian bisa ambigu bila banyak orang berpakaian serupa. Penyaring halusinasi berbasis kata bisa membuang sinonim. Tidak ada kamera belakang, GPS tanpa RTK, dan pengujian dibatasi pada kondisi siang hari dengan jumlah orang terbatas.</p></details>
+        <details class="qa"><summary>Bagaimana dengan privasi orang di sekitar kendaraan?</summary>
+          <p>Sistem tidak memakai pengenalan wajah atau biometrik, hanya pakaian, aksesori, dan posisi. Validasi berfungsi sebagai pendukung penjemputan, bukan autentikasi. Citra hanya dikirim saat kendaraan sudah tiba dan ada orang terdeteksi, dan pengiriman berhenti setelah pesanan selesai.</p></details>
+        <details class="qa"><summary>Apa pengembangan lanjutan yang disarankan?</summary>
+          <p>Mengaktifkan deteksi saat kendaraan melambat mendekati titik jemput, seperti kerangka Wu et al. yang mulai sekitar 100 m sebelum lokasi. Lalu titik jemput dinamis, VLM lokal agar tidak bergantung pada koneksi, kamera tambahan di belakang, pengujian malam hari, dan dukungan lebih dari satu kendaraan.</p></details>
+        <details class="qa"><summary>Mengapa tidak melakukan fine-tuning model?</summary>
+          <p>Fine-tuning membutuhkan dataset percakapan penjemputan dan citra berlabel dalam jumlah besar, serta sumber daya pelatihan. Batasan penelitian adalah prompt engineering pada model siap pakai. Uji pendahuluan menunjukkan model siap pakai sudah cukup akurat untuk membuktikan alur sistem.</p></details>
       </section>
     </div>
   </div>
 <script>
-document.querySelectorAll('[data-qa]').forEach(function (b) {
-  b.addEventListener('click', function () {
-    var buka = b.getAttribute('data-qa') === 'buka';
-    document.querySelectorAll('details.qa').forEach(function (d) { d.open = buka; });
+(function () {
+  var semua = Array.prototype.slice.call(document.querySelectorAll('details.qa'));
+  document.querySelectorAll('[data-qa]').forEach(function (b) {
+    b.addEventListener('click', function () {
+      var aksi = b.getAttribute('data-qa');
+      if (aksi === 'acak') {
+        semua.forEach(function (d) { d.open = false; d.classList.remove('acak'); });
+        var d = semua[Math.floor(Math.random() * semua.length)];
+        d.classList.add('acak');
+        d.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        return;
+      }
+      semua.forEach(function (d) { d.open = aksi === 'buka'; d.classList.remove('acak'); });
+    });
   });
-});
+})();
 </script>
 </main>
 
