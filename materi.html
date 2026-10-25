@@ -1,0 +1,507 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Materi · Robotaxi ITS</title>
+<meta name="description" content="Materi belajar metode, algoritma, alat, dan teori dalam penelitian layanan penjemputan robotaxi ITS, beserta latihan pertanyaan sidang.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/style.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%236d4fd8'/%3E%3Ctext x='16' y='21' font-size='13' font-family='sans-serif' font-weight='700' fill='white' text-anchor='middle'%3ERT%3C/text%3E%3C/svg%3E">
+</head>
+<body>
+<header class="site-header">
+  <div class="inner">
+    <a class="brand" href="index.html"><span class="brand-mark">RT</span>Robotaxi ITS</a>
+    <nav class="nav" aria-label="Navigasi utama">
+      <a href="index.html">Beranda</a>
+      <a href="sistem.html">Sistem</a>
+      <a href="materi.html" aria-current="page">Materi</a>
+      <a href="petunjuk.html">Petunjuk</a>
+      <a href="pedoman.html">Pedoman</a>
+      <a href="referensi.html">Referensi</a>
+      <a href="galeri.html">Galeri</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <div class="eyebrow">Materi</div>
+  <h1>Materi metode, alat, dan teori</h1>
+  <p class="lead">Penjelasan ringkas setiap metode, algoritma, alat, dan teori yang dipakai dalam penelitian ini. Setiap topik menjawab empat hal: apa itu, bagaimana cara kerjanya, di mana dipakai dalam penelitian ini, dan mengapa dipilih. Bagian terakhir berisi latihan pertanyaan sidang.</p>
+  <div class="callout">
+    <p>Nomor dalam kurung siku, misalnya [Wu 2026], merujuk ke halaman <a href="referensi.html">Referensi</a>. Bagian bertanda <span class="tag" style="margin:0">luar pustaka</span> adalah penjelasan pendukung yang belum dikutip di proposal.</p>
+  </div>
+
+  <div class="materi">
+    <nav class="side-toc" aria-label="Daftar materi">
+      <div class="grp">A. Pengembangan</div>
+      <a href="#prototyping">Iterative Prototyping</a>
+      <a href="#client-server">Client-server, REST, WebSocket</a>
+      <a href="#state-machine">Mesin status</a>
+      <a href="#basis-data">Basis data relasional</a>
+      <div class="grp">B. LLM</div>
+      <a href="#transformer">Transformer dan attention</a>
+      <a href="#llm">Large Language Model</a>
+      <a href="#prompt">Prompt engineering</a>
+      <a href="#structured">Keluaran terstruktur</a>
+      <a href="#halusinasi">Halusinasi dan penyaringnya</a>
+      <div class="grp">C. VLM</div>
+      <a href="#vlm">Vision-Language Model</a>
+      <a href="#clip">CLIP</a>
+      <a href="#qwen-vl">Qwen-VL</a>
+      <a href="#som">Kandidat bernomor</a>
+      <a href="#masking">Mode crop, masking, penuh</a>
+      <div class="grp">D. Deteksi objek</div>
+      <a href="#yolo">YOLO</a>
+      <a href="#iou-nms">IoU dan NMS</a>
+      <a href="#yolov10">YOLOv10</a>
+      <a href="#ovd">Deteksi kosakata terbuka</a>
+      <a href="#person-search">Pencarian orang berbasis teks</a>
+      <div class="grp">E. Metode rujukan</div>
+      <a href="#wu">Metode Wu et al.</a>
+      <a href="#cosine">Kemiripan kosinus</a>
+      <div class="grp">F. Evaluasi</div>
+      <a href="#confusion">Matriks konfusi</a>
+      <a href="#metrik-sistem">Metrik sistem</a>
+      <div class="grp">G. Kendaraan otonom</div>
+      <a href="#ros2">ROS 2</a>
+      <a href="#gnss">GNSS dan koordinat</a>
+      <a href="#enu">Koordinat lokal ENU</a>
+      <a href="#haversine">Jarak haversine</a>
+      <a href="#kalman">Kalman Filter</a>
+      <a href="#dijkstra">Rute global dan Dijkstra</a>
+      <a href="#kendali">Kendali kendaraan</a>
+      <a href="#edge">Komputasi tepi</a>
+      <div class="grp">H. Latihan sidang</div>
+      <a href="#latihan">Pertanyaan dan jawaban</a>
+    </nav>
+
+    <div>
+      <!-- A -->
+      <section class="bab">
+        <h2><span class="no">A</span> Metode pengembangan dan arsitektur</h2>
+
+        <article class="card topic" id="prototyping">
+          <h3>Iterative Prototyping</h3>
+          <dl class="kv">
+            <dt>Apa itu</dt><dd>Model proses perangkat lunak yang membangun versi kerja secara cepat, mengujinya, lalu memperbaikinya berulang kali sampai kebutuhan jelas [Pressman 2020].</dd>
+            <dt>Tahapan</dt><dd>Komunikasi dan analisis kebutuhan, perencanaan dan pemodelan desain cepat, konstruksi prototipe, evaluasi dan umpan balik. Hasil evaluasi kembali ke tahap pertama.</dd>
+            <dt>Di penelitian ini</dt><dd>Iterasi pertama menghasilkan server, aplikasi penumpang, dan simulator kendaraan. Kegagalan saat uji, misalnya VLM berhenti dipanggil karena kata "gelap" tidak dikenali sebagai warna, langsung memperbaiki aturan pada iterasi berikutnya.</dd>
+            <dt>Mengapa</dt><dd>Kebutuhan agen percakapan dan VLM sulit ditentukan sejak awal. Perilaku model baru terlihat setelah dicoba, sehingga model air terjun kurang cocok.</dd>
+          </dl>
+        </article>
+
+        <article class="card topic" id="client-server">
+          <h3>Client-server, REST, dan WebSocket</h3>
+          <dl class="kv">
+            <dt>Client-server</dt><dd>Sistem dibagi menjadi klien yang meminta layanan dan server yang memproses permintaan. Di sini kliennya adalah aplikasi penumpang dan komputer kendaraan.</dd>
+            <dt>REST</dt><dd>Gaya arsitektur berbasis sumber daya yang diakses lewat metode HTTP (GET, POST, PUT, DELETE), tanpa menyimpan keadaan sesi di server [Fielding 2000]. Dipakai untuk memesan, mengambil titik jemput, dan meminta foto.</dd>
+            <dt>WebSocket</dt><dd>Koneksi dua arah yang tetap terbuka. Server bisa mengirim pesan kapan saja tanpa diminta. Dipakai untuk status, posisi kendaraan, pesan agen, dan aliran citra dari kendaraan.</dd>
+            <dt>Mengapa kendaraan yang membuka koneksi</dt><dd>Kendaraan berada di jaringan seluler tanpa alamat IP publik, sehingga server tidak bisa menghubunginya lebih dulu. Kendaraan membuka koneksi ke server dan mengirim sinyal detak (<em>heartbeat</em>) secara berkala.</dd>
+          </dl>
+        </article>
+
+        <article class="card topic" id="state-machine">
+          <h3>Mesin status (<em>finite state machine</em>)</h3>
+          <dl class="kv">
+            <dt>Apa itu</dt><dd>Model yang menyatakan sistem selalu berada pada satu status dari himpunan terbatas, dan hanya boleh berpindah melalui transisi yang sudah didefinisikan.</dd>
+            <dt>Di penelitian ini</dt><dd>Pesanan punya status dibuat, dikirim, menuju titik, menunggu ciri, mencari, butuh ciri tambahan, ditemukan, terkonfirmasi, selesai, gagal, dan dibatalkan. Kendaraan punya status siaga, menuju titik, tiba, dan offline. Setiap status aktif punya batas waktu.</dd>
+            <dt>Mengapa</dt><dd>Alur penjemputan melibatkan tiga pihak yang berjalan bersamaan. Tabel transisi mencegah keadaan yang tidak masuk akal, misalnya VLM dipanggil padahal kendaraan belum tiba, dan memudahkan pengujian otomatis.</dd>
+          </dl>
+        </article>
+
+        <article class="card topic" id="basis-data">
+          <h3>Basis data relasional dan ORM</h3>
+          <dl class="kv">
+            <dt>Apa itu</dt><dd>Data disimpan dalam tabel yang saling terhubung melalui kunci primer (PK) dan kunci asing (FK). ORM (<em>Object-Relational Mapping</em>) seperti SQLAlchemy memetakan tabel ke kelas Python.</dd>
+            <dt>Di penelitian ini</dt><dd>Enam tabel: titik jemput, pesanan, pesan percakapan, ciri penumpang, hasil identifikasi, dan log status. Berkas citra disimpan di sistem berkas, basis data hanya menyimpan jalurnya.</dd>
+            <dt>Mengapa</dt><dd>Cap waktu setiap tahap dan setiap hasil VLM tersimpan, sehingga metrik seperti waktu dari tiba sampai terkonfirmasi bisa dihitung ulang dari data.</dd>
+          </dl>
+        </article>
+      </section>
+
+      <!-- B -->
+      <section class="bab">
+        <h2><span class="no">B</span> Large Language Model</h2>
+
+        <article class="card topic" id="transformer">
+          <h3>Transformer dan mekanisme <em>attention</em></h3>
+          <dl class="kv">
+            <dt>Apa itu</dt><dd>Arsitektur jaringan saraf yang memproses seluruh urutan token sekaligus dan menentukan hubungan antartoken dengan <em>self-attention</em> [Vaswani 2017]. Hampir semua LLM dan VLM modern dibangun di atasnya.</dd>
+            <dt>Cara kerja</dt><dd>Setiap token diubah menjadi tiga vektor: <em>query</em> (Q), <em>key</em> (K), dan <em>value</em> (V). Bobot perhatian dihitung dari kemiripan Q dengan semua K, lalu dipakai untuk menjumlahkan V.</dd>
+          </dl>
+          <div class="formula">Attention(Q, K, V) = softmax( Q·K<sup>T</sup> / √d<sub>k</sub> ) · V
+            <small>d<sub>k</sub> adalah dimensi vektor key. Pembagian dengan √d<sub>k</sub> menjaga nilai softmax tidak terlalu tajam.</small></div>
+        </article>
+
+        <article class="card topic" id="llm">
+          <h3>Large Language Model (LLM)</h3>
+          <dl class="kv">
+            <dt>Apa itu</dt><dd>Model Transformer berukuran sangat besar yang dilatih memprediksi token berikutnya pada teks dalam jumlah masif. Model yang cukup besar mampu mengerjakan tugas baru hanya dari instruksi dan beberapa contoh di dalam prompt [Brown 2020].</dd>
+            <dt>Di penelitian ini</dt><dd>Agen percakapan memakai model keluarga Gemini (misalnya <code>gemini-3.1-flash-lite</code>) melalui Gemini API atau OpenRouter. Agen membalas penumpang dan sekaligus mengekstraksi ciri ke format terstruktur.</dd>
+            <dt>Mengapa model siap pakai</dt><dd>Penelitian dibatasi pada <em>prompt engineering</em> tanpa <em>fine-tuning</em>. Model siap pakai sudah memahami bahasa Indonesia sehari-hari, sehingga tidak perlu mengumpulkan data latih percakapan penjemputan.</dd>
+          </dl>
+        </article>
+
+        <article class="card topic" id="prompt">
+          <h3>Prompt engineering</h3>
+          <dl class="kv">
+            <dt>Apa itu</dt><dd>Teknik merancang instruksi masukan agar model menghasilkan keluaran yang diinginkan tanpa mengubah bobot model [Sahoo 2024].</dd>
+            <dt>Teknik umum</dt><dd><em>Zero-shot</em> (instruksi saja), <em>few-shot</em> (instruksi ditambah contoh), dan <em>chain-of-thought</em> (model diminta menalar bertahap sebelum menjawab) [Wei 2022].</dd>
+            <dt>Di penelitian ini</dt><dd>Instruksi agen berisi peran, titik jemput, status pesanan, ciri yang sudah tercatat, dan daftar ciri yang masih kurang. Instruksi VLM meminta model menilai setiap kandidat bernomor, menuliskan alasannya, lalu memutuskan. Setiap versi instruksi diberi nomor (misalnya v3) dan dicatat di setiap hasil.</dd>
+            <dt>Mengapa</dt><dd>Perilaku model diatur lewat teks yang mudah diubah antariterasi, dan versi instruksi yang tercatat membuat hasil uji bisa dibandingkan.</dd>
+          </dl>
+        </article>
+
+        <article class="card topic" id="structured">
+          <h3>Keluaran terstruktur (<em>structured output</em>)</h3>
+          <dl class="kv">
+            <dt>Apa itu</dt><dd>Model dipaksa menjawab dalam JSON yang mengikuti skema tertentu. Skema berisi nama kolom, tipe data, dan kolom wajib.</dd>
+            <dt>Di penelitian ini</dt><dd>Agen menjawab dengan kolom balasan, pakaian atas, pakaian bawah, aksesori, posisi, dan permintaan foto. VLM menjawab dengan keputusan (ada atau tidak), nomor kandidat, deskripsi yang terlihat, dan alasan. Suhu (<em>temperature</em>) diatur rendah, 0,2, agar jawaban konsisten.</dd>
+            <dt>Mengapa</dt><dd>Server perlu membaca jawaban model secara pasti. Teks bebas sulit diurai dan rawan salah format.</dd>
+          </dl>
+        </article>
+
+        <article class="card topic" id="halusinasi">
+          <h3>Halusinasi dan penyaringnya</h3>
+          <dl class="kv">
+            <dt>Apa itu</dt><dd>Model menghasilkan informasi yang terdengar meyakinkan tetapi tidak didukung masukan. Pada VLM, contohnya menyebut objek yang tidak ada di gambar [Qu 2024].</dd>
+            <dt>Risiko di sini</dt><dd>Agen bisa mencatat "kaos merah" padahal penumpang berkata "kaos hijau", atau menambahkan aksesori yang tidak pernah disebut. Ciri yang salah membuat VLM mencari orang yang salah.</dd>
+            <dt>Penyaring</dt><dd>Server memecah setiap nilai ciri menjadi kata, membuang kata fungsi (misalnya "dan", "dengan"), lalu memeriksa apakah semua kata isi pernah diucapkan penumpang. Nilai yang memuat kata asing dibuang dan tidak disimpan.</dd>
+            <dt>Keterbatasan</dt><dd>Pemeriksaan berbasis kata ini sengaja ketat. Sinonim yang diucapkan berbeda, misalnya "baju" dan "kaos", bisa ikut terbuang, sehingga agen diinstruksikan memakai kata penumpang apa adanya.</dd>
+          </dl>
+        </article>
+      </section>
+
+      <!-- C -->
+      <section class="bab">
+        <h2><span class="no">C</span> Vision-Language Model</h2>
+
+        <article class="card topic" id="vlm">
+          <h3>Vision-Language Model (VLM)</h3>
+          <dl class="kv">
+            <dt>Apa itu</dt><dd>Model yang menerima citra dan teks sekaligus, lalu menjawab dalam bahasa alami [Sharshar 2025].</dd>
+            <dt>Cara kerja</dt><dd>Citra dipotong menjadi <em>patch</em>, diolah <em>encoder</em> visual (CNN atau <em>Vision Transformer</em>) menjadi fitur, lalu fitur itu dipetakan oleh <em>adapter</em> ke ruang token LLM. LLM kemudian memproses token citra dan token teks bersama.</dd>
+            <dt>Di penelitian ini</dt><dd>VLM membandingkan setiap kandidat pada citra kamera dengan ringkasan ciri penumpang, termasuk posisi relatif terhadap objek sekitar.</dd>
+            <dt>Mengapa</dt><dd>VLM bisa menalar ciri yang kompleks seperti "duduk di bangku dekat pintu", yang tidak bisa diwakili kelas detektor biasa.</dd>
+          </dl>
+        </article>
+
+        <article class="card topic" id="clip">
+          <h3>CLIP</h3>
+          <dl class="kv">
+            <dt>Apa itu</dt><dd>Model yang melatih <em>encoder</em> citra dan <em>encoder</em> teks bersama-sama pada pasangan citra-teks dari internet, sehingga citra dan teks yang cocok berdekatan dalam satu ruang vektor [Radford 2021].</dd>
+            <dt>Cara kerja</dt><dd>Pembelajaran kontrastif: dalam satu kelompok data, pasangan yang benar dibuat mirip dan pasangan yang salah dibuat berjauhan.</dd>
+            <dt>Kaitan</dt><dd>YOLO-World memakai <em>encoder</em> teks CLIP untuk mengubah nama kelas menjadi vektor, sehingga detektor bisa menerima kelas berupa teks bebas.</dd>
+          </dl>
+        </article>
+
+        <article class="card topic" id="qwen-vl">
+          <h3>Qwen-VL</h3>
+          <dl class="kv">
+            <dt>Apa itu</dt><dd>VLM sumber terbuka dengan LLM Qwen-7B, <em>encoder</em> visual ViT-bigG, dan <em>adapter</em> satu lapis <em>cross-attention</em> yang memadatkan fitur citra menjadi 256 token. Total sekitar 9,6 miliar parameter [Bai 2023].</dd>
+            <dt>Kaitan</dt><dd>Dipakai metode rujukan Wu et al. untuk merangkum deskripsi penumpang dan mendeskripsikan setiap potongan kandidat.</dd>
+            <dt>Mengapa tidak dipakai</dt><dd>Butuh GPU besar, dan pada uji coba pemilihan berdasarkan skor kemiripan dari deskripsinya gagal pada kandidat mirip. Penelitian ini memakai VLM layanan <em>cloud</em> yang menalar seluruh kandidat dalam satu panggilan.</dd>
+          </dl>
+        </article>
+
+        <article class="card topic" id="som">
+          <h3>Kandidat bernomor pada satu citra <span class="tag">luar pustaka</span></h3>
+          <dl class="kv">
+            <dt>Apa itu</dt><dd>Setiap orang hasil deteksi diberi kotak dan nomor langsung di atas citra, lalu VLM diminta menyebut nomor yang cocok. Teknik serupa dikenal sebagai <a href="https://arxiv.org/abs/2310.11441" target="_blank" rel="noopener"><em>Set-of-Mark prompting</em></a>.</dd>
+            <dt>Di penelitian ini</dt><dd>Label nomor diletakkan di atas kotak agar tidak menutupi kepala, hijab, atau topi. Nomor yang dijawab VLM dipakai untuk menggambar kotak hijau pada foto bukti.</dd>
+            <dt>Mengapa</dt><dd>VLM melihat semua kandidat sekaligus sehingga bisa membandingkan langsung, misalnya dua orang sama-sama berbaju putih tetapi celananya berbeda. Ini menggantikan pendekatan skor per kandidat yang gagal pada metode rujukan.</dd>
+          </dl>
+        </article>
+
+        <article class="card topic" id="masking">
+          <h3>Mode <em>crop</em>, <em>masking</em>, dan bingkai penuh</h3>
+          <dl class="kv">
+            <dt><em>Crop</em></dt><dd>Setiap kandidat dipotong dan dikirim dalam panggilan terpisah. Jumlah panggilan sebanyak jumlah kandidat, dan posisi relatif antarkandidat hilang.</dd>
+            <dt><em>Masking</em></dt><dd>Satu citra utuh, tetapi area di luar kotak kandidat dihitamkan. Satu panggilan per citra, posisi relatif tetap ada, dan latar yang mengganggu disembunyikan.</dd>
+            <dt>Bingkai penuh</dt><dd>Citra dikirim apa adanya. Dipakai bila penumpang menyebut posisi dengan tegas terhadap objek sekitar, karena objek itu harus terlihat oleh VLM.</dd>
+            <dt>Hasil awal</dt><dd>Pada lima citra uji, <em>masking</em> mengurangi panggilan dari 17 menjadi 5 (berkurang 70,6%) dan token dari 22.156 menjadi 6.493 (berkurang 70,7%). Token per panggilan hampir tetap sekitar 1.200, berapa pun ukuran citranya.</dd>
+          </dl>
+        </article>
+      </section>
+
+      <!-- D -->
+      <section class="bab">
+        <h2><span class="no">D</span> Deteksi objek</h2>
+
+        <article class="card topic" id="yolo">
+          <h3>YOLO (You Only Look Once)</h3>
+          <dl class="kv">
+            <dt>Apa itu</dt><dd>Keluarga detektor objek satu tahap: sekali lewat jaringan, model langsung menghasilkan kotak pembatas, kelas, dan skor keyakinan untuk seluruh citra.</dd>
+            <dt>Cara kerja</dt><dd><em>Backbone</em> mengekstrak fitur, <em>neck</em> menggabungkan fitur dari beberapa skala, dan <em>head</em> memprediksi kotak serta kelas. Prediksi dengan skor di bawah ambang dibuang.</dd>
+            <dt>Di penelitian ini</dt><dd>Berjalan di komputer kendaraan hanya untuk kelas orang (<em>person</em>). Ambang keyakinan di simulator 0,25. Hanya <em>frame</em> yang berisi orang yang dikirim ke server.</dd>
+            <dt>Mengapa</dt><dd>Cepat dan ringan, sehingga cocok sebagai penyaring awal sebelum VLM yang lebih mahal dipanggil.</dd>
+          </dl>
+        </article>
+
+        <article class="card topic" id="iou-nms">
+          <h3>IoU dan Non-Maximum Suppression</h3>
+          <dl class="kv">
+            <dt>IoU</dt><dd><em>Intersection over Union</em> mengukur seberapa besar dua kotak saling tumpang tindih, dengan nilai 0 sampai 1.</dd>
+          </dl>
+          <div class="formula">IoU(A, B) = luas(A ∩ B) / luas(A ∪ B)</div>
+          <dl class="kv">
+            <dt>NMS</dt><dd>Detektor sering menghasilkan beberapa kotak untuk satu objek. NMS menyimpan kotak dengan skor tertinggi dan membuang kotak lain yang IoU-nya terhadap kotak itu melebihi ambang.</dd>
+            <dt>Di penelitian ini</dt><dd>IoU dipakai untuk mengenali kandidat yang sudah ditolak penumpang. Bila kotak baru pada kamera yang sama tumpang tindih ≥ 0,5 dengan kotak orang yang dijawab "Bukan saya", kandidat itu tidak dikirim lagi ke VLM.</dd>
+          </dl>
+        </article>
+
+        <article class="card topic" id="yolov10">
+          <h3>YOLOv10</h3>
+          <dl class="kv">
+            <dt>Apa itu</dt><dd>Versi YOLO yang menghilangkan NMS saat inferensi dengan pelatihan <em>consistent dual assignments</em>, sehingga bisa berjalan <em>end-to-end</em> dengan latensi lebih rendah [Wang 2024].</dd>
+            <dt>Kaitan</dt><dd>Dipakai metode rujukan Wu et al. untuk mendeteksi orang. Ambang deteksinya diatur dari estimasi kepadatan kerumunan oleh Qwen-VL.</dd>
+          </dl>
+        </article>
+
+        <article class="card topic" id="ovd">
+          <h3>Deteksi kosakata terbuka (<em>open-vocabulary</em>)</h3>
+          <dl class="kv">
+            <dt>Apa itu</dt><dd>Detektor yang kelasnya ditentukan saat dipakai lewat teks, tidak terbatas pada daftar kelas saat pelatihan [Zhu 2024].</dd>
+            <dt>YOLO-World</dt><dd>Menggabungkan YOLO dengan <em>encoder</em> teks CLIP dan jaringan penggabung fitur citra-teks, sehingga tetap cepat seperti YOLO [Cheng 2024].</dd>
+            <dt>Grounding DINO</dt><dd>Detektor berbasis Transformer yang menerima kalimat dan menandai objek yang dirujuk. Lebih kuat pada kalimat panjang, tetapi lebih berat [Liu 2024].</dd>
+            <dt>Temuan uji</dt><dd>Memasukkan kalimat deskripsi utuh sebagai kelas YOLO-World hanya mencapai akurasi 56,0% (<em>recall</em> 16,0%). Membatasi YOLO-World pada kelas orang lalu menyerahkan atribut ke VLM mencapai 92,0%. Karena itu detektor hanya mencari orang.</dd>
+          </dl>
+        </article>
+
+        <article class="card topic" id="person-search">
+          <h3>Pencarian orang berbasis teks</h3>
+          <dl class="kv">
+            <dt>Apa itu</dt><dd>Tugas menemukan orang di kumpulan citra berdasarkan deskripsi bahasa alami, misalnya "wanita berbaju putih dengan tas hitam" [Li 2017]. Berkembang menjadi <em>text-based person re-identification</em> [Jiang 2024].</dd>
+            <dt>Kaitan</dt><dd>Identifikasi penumpang adalah versi khusus tugas ini: satu deskripsi, satu citra kamera, dan beberapa kandidat. Bedanya, deskripsi dikumpulkan lewat percakapan dan bisa dilengkapi saat pencarian gagal.</dd>
+          </dl>
+        </article>
+      </section>
+
+      <!-- E -->
+      <section class="bab">
+        <h2><span class="no">E</span> Metode rujukan</h2>
+
+        <article class="card topic" id="wu">
+          <h3>Metode Wu et al. (2026)</h3>
+          <dl class="kv">
+            <dt>Alur</dt><dd>(1) Qwen-VL merangkum deskripsi penumpang. (2) Untuk setiap <em>frame</em>, Qwen-VL memperkirakan kepadatan kerumunan dan ambang YOLOv10 disesuaikan. (3) Setiap potongan orang dideskripsikan Qwen-VL. (4) Deskripsi kandidat dibandingkan dengan rangkuman memakai kemiripan kosinus, dan kandidat terbaik dipilih bila skornya di atas 0,3.</dd>
+            <dt>Hasil</dt><dd>Akurasi 55,98% pada dataset HID-nuScenes [Wu 2026].</dd>
+            <dt>Kelemahan</dt><dd>Representasi kalimat diambil dari prediksi token terakhir Qwen-VL, bukan model yang dilatih khusus untuk makna kalimat. Pada uji replikasi, deskripsi "jaket merah" memberi skor 0,88 ke kandidat berjaket hitam dan 0,83 ke kandidat berjaket merah. Deskripsinya sudah benar, tetapi pemilihannya salah.</dd>
+            <dt>Respons penelitian ini</dt><dd>Tahap pemilihan diganti dengan penalaran VLM langsung atas semua kandidat bernomor, ditambah percakapan untuk melengkapi ciri dan konfirmasi penumpang.</dd>
+          </dl>
+        </article>
+
+        <article class="card topic" id="cosine">
+          <h3>Kemiripan kosinus</h3>
+          <dl class="kv">
+            <dt>Apa itu</dt><dd>Ukuran kesamaan arah dua vektor, bernilai −1 sampai 1. Nilai 1 berarti searah.</dd>
+          </dl>
+          <div class="formula">cos(a, b) = (a · b) / (‖a‖ ‖b‖)</div>
+          <dl class="kv">
+            <dt>Mengapa bisa gagal</dt><dd>Dua kalimat yang hampir sama, misalnya hanya berbeda warna jaket, menghasilkan vektor yang hampir searah. Satu kata yang paling menentukan tenggelam di antara kata-kata yang sama.</dd>
+          </dl>
+        </article>
+      </section>
+
+      <!-- F -->
+      <section class="bab">
+        <h2><span class="no">F</span> Evaluasi</h2>
+
+        <article class="card topic" id="confusion">
+          <h3>Matriks konfusi dan turunannya</h3>
+          <p>Setiap jawaban dibandingkan dengan kebenaran: TP (benar ada), TN (benar tidak ada), FP (bilang ada padahal tidak), FN (bilang tidak ada padahal ada).</p>
+          <div class="formula">
+            Precision = TP / (TP + FP) &nbsp;·&nbsp; Recall = TP / (TP + FN)<br>
+            Specificity = TN / (TN + FP) &nbsp;·&nbsp; Akurasi = (TP + TN) / (TP + TN + FP + FN)
+          </div>
+          <p>Contoh dari uji pendahuluan YOLO kelas orang + VLM pada 50 kalimat (25 objek ada, 25 tidak ada): TP 24, FN 1, TN 22, FP 3.</p>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Metrik</th><th>Perhitungan</th><th class="num">Hasil</th></tr></thead>
+              <tbody>
+                <tr><td>Recall</td><td>24 / 25</td><td class="num">96,0%</td></tr>
+                <tr><td>Precision</td><td>24 / 27</td><td class="num">88,9%</td></tr>
+                <tr><td>Specificity</td><td>22 / 25</td><td class="num">88,0%</td></tr>
+                <tr><td>Akurasi</td><td>46 / 50</td><td class="num">92,0%</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p>Pada penjemputan, FP lebih berbahaya karena kendaraan menunjuk orang yang salah. Karena itu foto bukti tetap dikonfirmasi penumpang.</p>
+        </article>
+
+        <article class="card topic" id="metrik-sistem">
+          <h3>Metrik sistem</h3>
+          <dl class="kv">
+            <dt>Kelengkapan ciri</dt><dd>Apakah ciri wajib (pakaian atas beserta warna, posisi) tercatat lengkap dari percakapan.</dd>
+            <dt>Tingkat halusinasi</dt><dd>Proporsi ciri tersimpan yang tidak pernah diucapkan penumpang.</dd>
+            <dt>Ketepatan pencocokan</dt><dd>Apakah nomor yang ditunjuk VLM adalah penumpang sebenarnya, termasuk saat ada orang berpenampilan mirip.</dd>
+            <dt>Latensi dan biaya</dt><dd>Waktu setiap panggilan VLM dan jumlah panggilan per pesanan.</dd>
+            <dt>Keberhasilan alur</dt><dd>Persentase pesanan yang sampai terkonfirmasi, dan waktu dari kendaraan tiba sampai terkonfirmasi.</dd>
+          </dl>
+        </article>
+      </section>
+
+      <!-- G -->
+      <section class="bab">
+        <h2><span class="no">G</span> Kendaraan otonom</h2>
+
+        <article class="card topic" id="ros2">
+          <h3>ROS 2</h3>
+          <dl class="kv">
+            <dt>Apa itu</dt><dd><em>Middleware</em> robotika yang menyusun sistem sebagai kumpulan <em>node</em> dalam graf komputasi [Macenski 2023].</dd>
+            <dt>Konsep dasar</dt><dd><em>Node</em> adalah satu proses dengan satu tanggung jawab. <em>Topic</em> adalah saluran terbitkan-langganan untuk data mengalir, misalnya citra kamera atau posisi. <em>Service</em> adalah permintaan-jawaban sekali. Komunikasi berjalan di atas DDS.</dd>
+            <dt>Di penelitian ini</dt><dd>Dua <em>node</em> baru: <em>node</em> penghubung (WebSocket ke server, destinasi, posisi, perintah berhenti) dan <em>node</em> deteksi orang (YOLO pada tiga kamera atap).</dd>
+            <dt>Mengapa</dt><dd>Navigasi dan kendali mobil riset ITS sudah dibangun di ROS 2 [Priyatna 2026; Hafidzh 2026]. Menambah <em>node</em> berarti tidak perlu mengubah sistem yang sudah ada.</dd>
+          </dl>
+        </article>
+
+        <article class="card topic" id="gnss">
+          <h3>GNSS dan koordinat geografis</h3>
+          <dl class="kv">
+            <dt>Apa itu</dt><dd>GNSS (<em>Global Navigation Satellite System</em>, termasuk GPS) menentukan posisi dari sinyal beberapa satelit dalam lintang (<em>latitude</em>) dan bujur (<em>longitude</em>).</dd>
+            <dt>Di kendaraan</dt><dd>Penerima u-blox ZED-F9P. Tanpa koreksi RTK, galat posisi bisa mencapai beberapa meter.</dd>
+            <dt>Dampak</dt><dd>Kendaraan bisa berhenti beberapa meter dari koordinat titik jemput. Karena itu kedatangan memakai radius, dan area tunggu sebaiknya berada di jangkauan kamera.</dd>
+          </dl>
+        </article>
+
+        <article class="card topic" id="enu">
+          <h3>Koordinat lokal ENU</h3>
+          <dl class="kv">
+            <dt>Apa itu</dt><dd>Sistem koordinat datar dalam meter: <em>East</em> (timur), <em>North</em> (utara), <em>Up</em> (atas), relatif terhadap satu titik acuan.</dd>
+            <dt>Di kendaraan</dt><dd>Titik acuan adalah fix GPS pertama saat sistem dinyalakan, dan bisa diatur ulang. Kalman Filter bekerja dalam ENU. <em>Node</em> penghubung mengonversi kembali ke lintang dan bujur sebelum mengirim posisi ke server.</dd>
+            <dt>Mengapa</dt><dd>Perhitungan gerak dan kendali jauh lebih mudah dalam meter daripada dalam derajat.</dd>
+          </dl>
+        </article>
+
+        <article class="card topic" id="haversine">
+          <h3>Jarak haversine</h3>
+          <dl class="kv">
+            <dt>Apa itu</dt><dd>Rumus jarak terpendek antara dua titik di permukaan bola dari lintang dan bujurnya.</dd>
+          </dl>
+          <div class="formula">
+            a = sin²(Δφ/2) + cos φ<sub>1</sub> · cos φ<sub>2</sub> · sin²(Δλ/2)<br>
+            d = 2R · atan2( √a, √(1 − a) )
+            <small>φ lintang, λ bujur (dalam radian), R jari-jari bumi sekitar 6.371 km.</small>
+          </div>
+          <dl class="kv">
+            <dt>Di penelitian ini</dt><dd>Kendaraan dianggap tiba bila jarak haversine ke titik jemput lebih kecil dari radius kedatangan. Perencana rute bawaan kendaraan memakai ambang 5 m, dan simulator memakai radius per titik jemput.</dd>
+          </dl>
+        </article>
+
+        <article class="card topic" id="kalman">
+          <h3>Kalman Filter</h3>
+          <dl class="kv">
+            <dt>Apa itu</dt><dd>Algoritma estimasi yang menggabungkan model gerak dengan pengukuran sensor yang berderau, dengan bobot sesuai ketidakpastian masing-masing.</dd>
+            <dt>Dua langkah</dt><dd>Prediksi: perkirakan keadaan berikutnya dari model gerak, ketidakpastian bertambah. Pembaruan: koreksi dengan pengukuran, ketidakpastian berkurang. Bobot koreksi disebut <em>Kalman gain</em>.</dd>
+          </dl>
+          <div class="formula">
+            x̂<sub>k</sub> = x̂<sub>k|k−1</sub> + K<sub>k</sub> ( z<sub>k</sub> − H x̂<sub>k|k−1</sub> )
+            <small>x̂ estimasi keadaan, z pengukuran, H pemetaan keadaan ke pengukuran, K Kalman gain. K besar berarti pengukuran lebih dipercaya.</small>
+          </div>
+          <dl class="kv">
+            <dt>Di kendaraan</dt><dd>Menggabungkan GPS, IMU, dan odometri roda untuk posisi dan kecepatan, dengan RMSE posisi 0,173 m pada pengujian [Priyatna 2026]. Penelitian ini hanya membaca hasilnya.</dd>
+          </dl>
+        </article>
+
+        <article class="card topic" id="dijkstra">
+          <h3>Rute global dan algoritma Dijkstra</h3>
+          <dl class="kv">
+            <dt>Segmen titik acuan</dt><dd>Jalan kampus disiapkan secara luring sebagai segmen berisi titik GPS berurutan berjarak 0,5 sampai 1 m. Segmen A tersambung ke B bila ujung A berjarak kurang dari 5 m dari awal B, sehingga terbentuk graf berarah [Priyatna 2026].</dd>
+            <dt>Dijkstra</dt><dd>Mencari jalur berbiaya terkecil dari satu simpul ke simpul lain pada graf berbobot tidak negatif. Algoritma selalu memperluas simpul dengan jarak sementara terkecil, lalu memperbarui jarak tetangganya.</dd>
+            <dt>Di kendaraan</dt><dd>Segmen awal dipilih dari posisi dan arah hadap kendaraan, dan segmen akhir adalah segmen terdekat dari destinasi. Biaya sisi adalah jumlah titik di segmen tujuan. Rute dipotong 30 m ke depan untuk perencanaan lokal.</dd>
+            <dt>Konsekuensi</dt><dd>Server cukup mengirim koordinat titik jemput, tanpa titik awal. Titik jemput harus berada pada jalan yang tercakup segmen.</dd>
+          </dl>
+        </article>
+
+        <article class="card topic" id="kendali">
+          <h3>Kendali kendaraan</h3>
+          <dl class="kv">
+            <dt>Pure Pursuit</dt><dd>Memilih titik target di depan pada jarak <em>lookahead</em>, lalu menghitung sudut kemudi agar kendaraan melengkung menuju titik itu.</dd>
+          </dl>
+          <div class="formula">δ = atan( 2L · sin α / l<sub>d</sub> )
+            <small>δ sudut kemudi, L jarak sumbu roda, α sudut antara arah kendaraan dan arah ke titik target, l<sub>d</sub> jarak lookahead.</small></div>
+          <dl class="kv">
+            <dt>PID</dt><dd>Pengendali yang menghitung aksi dari galat saat ini (P), akumulasi galat (I), dan laju perubahan galat (D). Dipakai untuk mengubah kecepatan target menjadi perintah <em>throttle</em> dan rem [Hafidzh 2026].</dd>
+            <dt>Di penelitian ini</dt><dd>Kecepatan target nol membuat kendaraan mengerem hingga berhenti penuh. <em>Node</em> penghubung memakai mekanisme ini sebelum deteksi orang diaktifkan.</dd>
+          </dl>
+        </article>
+
+        <article class="card topic" id="edge">
+          <h3>Komputasi tepi (<em>edge filtering</em>)</h3>
+          <dl class="kv">
+            <dt>Apa itu</dt><dd>Sebagian pemrosesan dilakukan di dekat sumber data agar yang dikirim ke server lebih sedikit [Sharshar 2025].</dd>
+            <dt>Di penelitian ini</dt><dd>YOLO di komputer kendaraan hanya mengirim citra yang berisi orang. Citra dikompresi JPEG dan dibatasi lebarnya. VLM tidak dipanggil bila tidak ada orang.</dd>
+            <dt>Mengapa</dt><dd>Menghemat bandwidth seluler dan biaya panggilan VLM.</dd>
+          </dl>
+        </article>
+      </section>
+
+      <!-- H -->
+      <section class="bab" id="latihan">
+        <h2><span class="no">H</span> Latihan pertanyaan sidang</h2>
+        <p>Coba jawab sendiri dulu, lalu buka jawabannya.</p>
+        <div class="qa-tools">
+          <button class="btn" type="button" data-qa="buka">Buka semua jawaban</button>
+          <button class="btn" type="button" data-qa="tutup">Tutup semua</button>
+        </div>
+
+        <details class="qa"><summary>Seberapa penting penelitian ini? Penumpang bisa menemukan mobilnya sendiri.</summary>
+          <p>Masalahnya arah sebaliknya: kendaraan belum tahu siapa penumpangnya. Pada taksi berpengemudi, pengemudi dan penumpang saling mengenali lewat telepon dan isyarat tangan [Meister 2026]. Saluran itu hilang pada layanan tanpa pengemudi, dan pengguna melaporkan kendaraan bisa melewati mereka [Deng 2026]. Untuk ITS, kontribusi pertama adalah aplikasi penghubung itu sendiri, yang belum ada pada penelitian navigasi dan kendali sebelumnya.</p></details>
+
+        <details class="qa"><summary>Mengapa perlu VLM? Kendaraan cukup mengirim foto "saya di sini".</summary>
+          <p>Cara itu sudah ada sebagai jalur cadangan: penumpang bisa meminta foto dan memilih nomornya sendiri. VLM menambah tiga hal: penumpang cukup menjawab ya atau tidak pada satu kotak, sistem tahu orang mana yang berhak naik, dan pencocokan berjalan saat penumpang tidak melihat ponsel. Perbandingan kedua mode bisa diukur dengan waktu sampai terkonfirmasi dan tingkat keberhasilan.</p></details>
+
+        <details class="qa"><summary>Bagaimana jika penumpang tidak terlihat di kamera?</summary>
+          <p>Kendaraan berhenti di titik jemput, bukan melintas. Bila VLM tidak menemukan kandidat selama 30 detik, status berubah menjadi butuh ciri tambahan dan agen menanyakan ciri pembeda atau meminta penumpang mendekat. Penumpang juga bisa meminta foto untuk melihat apakah dirinya terlihat. Batasannya, tidak ada kamera belakang dan GPS tanpa RTK bisa meleset beberapa meter, sehingga area tunggu titik jemput dipilih dalam jangkauan kamera.</p></details>
+
+        <details class="qa"><summary>Kalau ada dua mobil yang mirip, bukankah VLM jadi tidak berguna?</summary>
+          <p>VLM tidak dimaksudkan membantu penumpang memilih mobil. Yang dicegah adalah orang yang salah dianggap penumpang. Penumpang tetap mengenali kendaraan dari peta, plat, dan warna. Lagi pula, penelitian ini memakai satu kendaraan riset, sehingga skenario dua mobil berada di luar cakupan.</p></details>
+
+        <details class="qa"><summary>Mengapa YOLO hanya mendeteksi orang, tidak langsung mencari "baju merah"?</summary>
+          <p>Pada uji pendahuluan, kalimat deskripsi utuh sebagai kelas YOLO-World hanya mencapai akurasi 56,0% dengan recall 16,0%. Potongan atribut hanya bisa menguji 27 dari 50 kalimat karena bergantung pada daftar kata kunci. YOLO kelas orang ditambah VLM mencapai 92,0% dan bisa menguji semua kalimat.</p></details>
+
+        <details class="qa"><summary>Apa bedanya penelitian ini dengan Wu et al.?</summary>
+          <p>Wu et al. memilih kandidat dengan kemiripan kosinus antardeskripsi, yang gagal saat kandidat mirip sebagian. Penelitian ini meminta VLM menalar semua kandidat bernomor sekaligus, menambahkan percakapan untuk melengkapi ciri, penyaring halusinasi, dan konfirmasi foto bukti. Evaluasinya pada alur sistem lengkap dengan kendaraan, bukan hanya pada dataset.</p></details>
+
+        <details class="qa"><summary>Bagaimana mencegah LLM mengarang ciri penumpang?</summary>
+          <p>Ada dua lapis. Instruksi agen meminta memakai kata penumpang apa adanya. Server lalu memeriksa setiap kata isi pada nilai ciri. Bila ada kata yang tidak pernah diucapkan penumpang, nilai itu dibuang. Keluaran terstruktur membuat pemeriksaan ini bisa dilakukan per kolom.</p></details>
+
+        <details class="qa"><summary>Mengapa memakai mode masking?</summary>
+          <p>Satu panggilan untuk semua kandidat, sehingga jumlah panggilan dan token berkurang sekitar 70% pada uji pendahuluan. Posisi relatif kandidat tetap terlihat, dan latar yang tidak relevan dihitamkan. Bila penumpang menyebut posisi terhadap objek tertentu, sistem memakai bingkai penuh agar objek itu terlihat.</p></details>
+
+        <details class="qa"><summary>Bagaimana kendaraan tahu sudah tiba, dan mengapa harus berhenti dulu?</summary>
+          <p>Posisi dari Kalman Filter dikonversi ke lintang dan bujur, lalu dihitung jarak haversine ke titik jemput. Bila di bawah radius kedatangan, kendaraan dihentikan dengan kecepatan target nol. Deteksi baru dijalankan setelah itu agar citra tidak kabur dan posisi orang tidak berubah di antara dua panggilan VLM.</p></details>
+
+        <details class="qa"><summary>Apakah ini termasuk penelitian interaksi manusia-robot?</summary>
+          <p>Tidak. Penelitian ini mengukur kinerja sistem: kelengkapan ciri, halusinasi, ketepatan pencocokan, latensi, dan keberhasilan alur. Skenario diperankan secara terskrip, dan tidak ada studi kegunaan, kepuasan, atau kepercayaan pengguna. Konfirmasi foto adalah langkah verifikasi dalam alur sistem.</p></details>
+
+        <details class="qa"><summary>Bagaimana dengan privasi orang di sekitar kendaraan?</summary>
+          <p>Sistem tidak memakai pengenalan wajah atau biometrik, hanya pakaian, aksesori, dan posisi. Validasi berfungsi sebagai pendukung penjemputan, bukan autentikasi. Citra hanya dikirim saat kendaraan sudah tiba dan ada orang terdeteksi, dan pengiriman berhenti setelah pesanan selesai.</p></details>
+
+        <details class="qa"><summary>Apa kelemahan sistem ini?</summary>
+          <p>Bergantung pada layanan model <em>cloud</em> dan koneksi jaringan. Ciri berbasis pakaian bisa ambigu bila banyak orang berpakaian serupa. Penyaring halusinasi berbasis kata bisa membuang sinonim. Tidak ada kamera belakang, GPS tanpa RTK, dan pengujian dibatasi pada kondisi siang hari dengan jumlah orang terbatas.</p></details>
+      </section>
+    </div>
+  </div>
+<script>
+document.querySelectorAll('[data-qa]').forEach(function (b) {
+  b.addEventListener('click', function () {
+    var buka = b.getAttribute('data-qa') === 'buka';
+    document.querySelectorAll('details.qa').forEach(function (d) { d.open = buka; });
+  });
+});
+</script>
+</main>
+
+<footer class="site-footer">
+  <div class="inner">
+    <span>Tugas Akhir · Departemen Teknik Komputer, Institut Teknologi Sepuluh Nopember</span>
+    <span>Halaman pendukung penelitian, bukan publikasi resmi.</span>
+  </div>
+</footer>
+</body>
+</html>

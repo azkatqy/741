@@ -232,3 +232,39 @@ footer.site-footer .inner { max-width: var(--maxw); margin: 0 auto; padding: 1.4
   h2 { margin-top: 2rem; }
 }
 [hidden] { display: none !important; }
+
+/* Materi */
+.materi { display: grid; gap: 2rem; grid-template-columns: 220px minmax(0, 1fr); align-items: start; }
+.materi > * { min-width: 0; }
+.side-toc { position: sticky; top: 76px; max-height: calc(100vh - 96px); overflow-y: auto; font-size: .88rem; padding-right: .3rem; }
+.side-toc .grp { font-weight: 700; color: var(--text); margin: .9rem 0 .25rem; font-size: .8rem; text-transform: uppercase; letter-spacing: .05em; }
+.side-toc a { display: block; color: var(--muted); text-decoration: none; padding: .18rem .5rem; border-radius: 6px; }
+.side-toc a:hover { background: var(--surface-2); color: var(--accent); }
+.bab { margin-top: 2.6rem; }
+.bab > h2 { margin-top: 0; display: flex; align-items: baseline; gap: .6rem; }
+.bab > h2 .no { color: var(--accent); font-size: 1rem; }
+.topic { scroll-margin-top: 80px; margin-bottom: 1.1rem; }
+.topic h3 { margin: 0 0 .5rem; font-size: 1.12rem; }
+.topic .tag { font-size: .75rem; font-weight: 600; color: var(--accent); background: var(--accent-soft); padding: .1rem .5rem; border-radius: 6px; margin-left: .3rem; vertical-align: middle; }
+.kv { display: grid; grid-template-columns: 9.5rem 1fr; gap: .45rem 1rem; margin: .4rem 0 .8rem; }
+.kv dt { font-weight: 600; color: var(--muted); font-size: .9rem; }
+.kv dd { margin: 0; }
+.formula {
+  font: 1rem/1.6 "Cambria Math", "STIX Two Math", Georgia, serif;
+  background: var(--surface-2); border-radius: 10px; padding: .7rem 1rem; margin: .5rem 0 .9rem; overflow-x: auto; white-space: nowrap;
+}
+.formula small { font-family: inherit; color: var(--muted); display: block; white-space: normal; font-size: .85rem; }
+details.qa { border: 1px solid var(--border); border-radius: 10px; padding: .55rem .9rem; margin: .5rem 0; background: var(--surface); }
+details.qa summary { cursor: pointer; font-weight: 600; }
+details.qa summary::marker { color: var(--accent); }
+details.qa[open] summary { margin-bottom: .4rem; }
+details.qa p:last-child { margin-bottom: 0; }
+.qa-tools { display: flex; gap: .5rem; flex-wrap: wrap; margin: .8rem 0; }
+.btn { font: inherit; font-size: .88rem; padding: .4rem .8rem; border-radius: 8px; border: 1px solid var(--border); background: var(--surface); color: var(--text); cursor: pointer; }
+.btn:hover { border-color: var(--accent); color: var(--accent); }
+@media (max-width: 860px) {
+  .materi { grid-template-columns: minmax(0, 1fr); }
+  .side-toc { position: static; max-height: none; display: none; }
+  .kv { grid-template-columns: 1fr; gap: .1rem; }
+  .kv dd { margin-bottom: .5rem; }
+}
