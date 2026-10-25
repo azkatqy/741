@@ -1,0 +1,179 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Robotaxi ITS: Layanan Penjemputan</title>
+<meta name="description" content="Halaman pendukung Tugas Akhir: sistem layanan penjemputan robotaxi dengan validasi identifikasi penumpang berbasis Vision-Language Model pada mobil riset otonom ITS.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/style.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%236d4fd8'/%3E%3Ctext x='16' y='21' font-size='13' font-family='sans-serif' font-weight='700' fill='white' text-anchor='middle'%3ERT%3C/text%3E%3C/svg%3E">
+</head>
+<body>
+<header class="site-header">
+  <div class="inner">
+    <a class="brand" href="index.html"><span class="brand-mark">RT</span>Robotaxi ITS</a>
+    <nav class="nav" aria-label="Navigasi utama">
+      <a href="index.html" aria-current="page">Beranda</a>
+      <a href="sistem.html">Sistem</a>
+      <a href="petunjuk.html">Petunjuk</a>
+      <a href="pedoman.html">Pedoman</a>
+      <a href="referensi.html">Referensi</a>
+      <a href="galeri.html">Galeri</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <section class="hero">
+    <div class="eyebrow">Tugas Akhir · Departemen Teknik Komputer ITS</div>
+    <h1>Sistem Layanan Penjemputan <em>Robotaxi</em> dengan Validasi Identifikasi Penumpang Berbasis <em>Vision-Language Model</em></h1>
+    <p class="title-en">Robotaxi Pick-up Service System with Vision-Language-Model-Based Passenger Identification Validation</p>
+    <p class="lead">Aplikasi penghubung antara penumpang dan mobil riset otonom ITS untuk tahap pemesanan hingga penjemputan. Setelah kendaraan tiba di titik jemput, VLM mencocokkan orang di kamera kendaraan dengan ciri yang disampaikan penumpang melalui percakapan.</p>
+    <div class="meta">
+      <span class="pill">Muhammad Navis Azka Atqiya</span>
+      <span class="pill">Pembimbing: Muhtadin, S.T., M.T.</span>
+      <span class="pill warn">Tahap proposal</span>
+      <span class="pill ok">Prototipe berjalan di simulator</span>
+    </div>
+  </section>
+
+  <h2>Alur penjemputan</h2>
+  <p>Penumpang memesan, menyebutkan ciri dirinya, lalu kendaraan mencari dan menunjukkan orang yang dikenalinya. Keputusan akhir tetap dikonfirmasi penumpang melalui foto bukti.</p>
+  <figure class="diagram" aria-label="Ilustrasi lima langkah alur penjemputan">
+    <svg viewBox="0 0 1000 250" role="img">
+      <defs>
+        <marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" class="head accent"/></marker>
+      </defs>
+      <!-- 1 Pesan -->
+      <g transform="translate(20,20)">
+        <rect class="box" x="0" y="0" width="160" height="150" rx="14"/>
+        <rect x="58" y="22" width="44" height="72" rx="8" fill="none" stroke="currentColor" class="line accent"/>
+        <circle cx="80" cy="50" r="9" fill="none" class="line accent"/>
+        <path d="M80 59 L80 72" class="line accent"/>
+        <text x="80" y="120" text-anchor="middle" font-weight="700" font-size="15">1. Pesan</text>
+        <text x="80" y="140" text-anchor="middle" font-size="12" class="muted">pilih titik jemput</text>
+      </g>
+      <!-- 2 Ciri -->
+      <g transform="translate(215,20)">
+        <rect class="box" x="0" y="0" width="160" height="150" rx="14"/>
+        <rect x="30" y="24" width="72" height="30" rx="10" class="box accent"/>
+        <rect x="58" y="62" width="72" height="30" rx="10" class="box"/>
+        <text x="66" y="44" text-anchor="middle" font-size="11">kaos hijau…</text>
+        <text x="94" y="82" text-anchor="middle" font-size="11" class="muted">celana?</text>
+        <text x="80" y="120" text-anchor="middle" font-weight="700" font-size="15">2. Sebut ciri</text>
+        <text x="80" y="140" text-anchor="middle" font-size="12" class="muted">percakapan dengan LLM</text>
+      </g>
+      <!-- 3 Tiba -->
+      <g transform="translate(410,20)">
+        <rect class="box" x="0" y="0" width="160" height="150" rx="14"/>
+        <path d="M34 78 L46 52 L114 52 L126 78 Z" class="box accent"/>
+        <rect x="28" y="76" width="104" height="18" rx="6" class="box accent"/>
+        <circle cx="52" cy="96" r="7" class="box"/><circle cx="108" cy="96" r="7" class="box"/>
+        <path d="M80 26 L80 46" class="line accent"/><circle cx="80" cy="24" r="5" class="box ok"/>
+        <text x="80" y="120" text-anchor="middle" font-weight="700" font-size="15">3. Tiba & berhenti</text>
+        <text x="80" y="140" text-anchor="middle" font-size="12" class="muted">GPS + radius kedatangan</text>
+      </g>
+      <!-- 4 VLM -->
+      <g transform="translate(605,20)">
+        <rect class="box" x="0" y="0" width="160" height="150" rx="14"/>
+        <rect x="26" y="22" width="108" height="72" rx="6" class="box"/>
+        <g class="muted"><circle cx="50" cy="48" r="6" class="box"/><rect x="44" y="55" width="12" height="24" rx="3" class="box"/></g>
+        <circle cx="80" cy="48" r="6" class="box"/><rect x="74" y="55" width="12" height="24" rx="3" class="box ok"/>
+        <rect x="70" y="38" width="20" height="45" rx="2" fill="none" stroke-width="2" class="line" style="stroke:var(--ok)"/>
+        <circle cx="110" cy="48" r="6" class="box"/><rect x="104" y="55" width="12" height="24" rx="3" class="box"/>
+        <text x="80" y="120" text-anchor="middle" font-weight="700" font-size="15">4. YOLO + VLM</text>
+        <text x="80" y="140" text-anchor="middle" font-size="12" class="muted">kandidat bernomor</text>
+      </g>
+      <!-- 5 Konfirmasi -->
+      <g transform="translate(800,20)">
+        <rect class="box ok" x="0" y="0" width="180" height="150" rx="14"/>
+        <circle cx="90" cy="56" r="26" class="box ok"/>
+        <path d="M78 56 L87 65 L104 46" fill="none" stroke-width="4" stroke-linecap="round" style="stroke:var(--ok)"/>
+        <text x="90" y="120" text-anchor="middle" font-weight="700" font-size="15">5. Foto bukti</text>
+        <text x="90" y="140" text-anchor="middle" font-size="12" class="muted">penumpang mengonfirmasi</text>
+      </g>
+      <path d="M182 95 L213 95" class="line accent" marker-end="url(#ah)"/>
+      <path d="M377 95 L408 95" class="line accent" marker-end="url(#ah)"/>
+      <path d="M572 95 L603 95" class="line accent" marker-end="url(#ah)"/>
+      <path d="M767 95 L798 95" class="line accent" marker-end="url(#ah)"/>
+      <path d="M890 172 C890 225, 295 225, 295 172" class="line" stroke-dasharray="5 5" marker-end="url(#ah)"/>
+      <text x="592" y="238" text-anchor="middle" font-size="12" class="muted">bukan saya / tidak ditemukan: agen menanyakan ciri pembeda</text>
+    </svg>
+    <figcaption>Ilustrasi alur penjemputan dari pemesanan sampai penumpang terkonfirmasi.</figcaption>
+  </figure>
+
+  <h2>Masalah dan solusi</h2>
+  <div class="grid two">
+    <div class="card">
+      <h3>Masalah</h3>
+      <ul class="clean">
+        <li>Mobil riset otonom ITS sudah bisa bernavigasi dan dikendalikan secara otonom, tetapi belum ada penghubung agar pengguna bisa memesan dan menentukan titik jemput.</li>
+        <li>Penjemputan <em>robotaxi</em> umumnya hanya mengandalkan GPS ponsel dan konfirmasi dari sisi pengguna, sehingga kendaraan belum bisa memastikan orang yang dijemput adalah penumpangnya.</li>
+        <li>Metode identifikasi berbasis VLM sebelumnya (Wu et al., 2026) menurun akurasinya saat ada orang berpenampilan mirip, dan belum memiliki mekanisme percakapan untuk melengkapi deskripsi.</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>Solusi yang diusulkan</h3>
+      <ul class="clean">
+        <li>Aplikasi web penumpang untuk pemesanan, pemilihan titik jemput tetap, dan pemantauan kendaraan di peta.</li>
+        <li>Agen percakapan berbasis LLM yang mengekstraksi ciri penumpang ke format terstruktur, dengan penyaring halusinasi di server.</li>
+        <li>YOLO di komputer kendaraan sebagai penyaring awal, lalu VLM menilai semua kandidat bernomor dalam satu panggilan.</li>
+        <li>Validasi dua tahap: pencocokan VLM, lalu konfirmasi penumpang terhadap foto bukti.</li>
+      </ul>
+    </div>
+  </div>
+
+  <h2>Fokus dan ruang lingkup</h2>
+  <div class="do-dont">
+    <div class="card do">
+      <h3>Termasuk cakupan</h3>
+      <ul class="clean">
+        <li>Aplikasi penghubung tahap pemesanan hingga penjemputan</li>
+        <li>Ekstraksi ciri dari percakapan berbahasa Indonesia</li>
+        <li>Pencocokan kandidat dengan VLM siap pakai (<em>prompt engineering</em>)</li>
+        <li>Integrasi dengan navigasi dan kendali yang sudah ada melalui ROS 2</li>
+        <li>Pengujian fungsional dan kinerja sistem dengan skenario terskrip</li>
+      </ul>
+    </div>
+    <div class="card dont">
+      <h3>Di luar cakupan</h3>
+      <ul class="clean">
+        <li>Pengembangan navigasi, lokalisasi, atau kendali kendaraan</li>
+        <li>Pelatihan ulang (<em>fine-tuning</em>) model</li>
+        <li>Pengenalan wajah atau data biometrik</li>
+        <li>Titik jemput dinamis dan perencanaan rute dari lokasi penumpang</li>
+        <li>Studi pengguna tentang kegunaan, kepuasan, atau kepercayaan</li>
+      </ul>
+    </div>
+  </div>
+
+  <h2>Hasil awal</h2>
+  <div class="grid three">
+    <div class="card"><div class="stat">92,0%</div><div class="stat-label">akurasi YOLO kelas orang + VLM pada 50 kalimat uji (YOLO kalimat utuh: 56,0%)</div></div>
+    <div class="card"><div class="stat">−70,6%</div><div class="stat-label">jumlah panggilan VLM pada mode <em>masking</em> dibanding mode <em>crop</em> (17 menjadi 5 panggilan)</div></div>
+    <div class="card"><div class="stat">48</div><div class="stat-label">pengujian otomatis untuk status pesanan, penyaring halusinasi, batas waktu, dan alur lengkap</div></div>
+    <div class="card"><div class="stat">22</div><div class="stat-label">pesanan uji dengan model sungguhan (17 hingga 24 Oktober 2026), 10 selesai sampai penumpang naik</div></div>
+  </div>
+  <p class="stat-label" style="margin-top:.8rem">Angka di atas berasal dari uji pendahuluan pada citra uji dan simulator, belum dari pengujian di kendaraan nyata.</p>
+
+  <h2>Jelajahi</h2>
+  <div class="grid three">
+    <a class="card" href="sistem.html"><h3>Desain sistem</h3><p>Arsitektur, alur 19 langkah, status pesanan, dan integrasi dengan navigasi kendaraan.</p><span class="go">Buka →</span></a>
+    <a class="card" href="petunjuk.html"><h3>Petunjuk</h3><p>Cara menjalankan prototipe, skenario demo, parameter, dan penanganan masalah.</p><span class="go">Buka →</span></a>
+    <a class="card" href="pedoman.html"><h3>Pedoman</h3><p>Ciri penumpang, skenario pengujian, privasi, dan aturan penulisan proposal.</p><span class="go">Buka →</span></a>
+    <a class="card" href="referensi.html"><h3>Referensi</h3><p>Daftar pustaka beserta tautan DOI dan arXiv, serta dokumentasi alat yang dipakai.</p><span class="go">Buka →</span></a>
+    <a class="card" href="galeri.html"><h3>Galeri</h3><p>Tangkapan layar aplikasi penumpang dan simulator kendaraan.</p><span class="go">Buka →</span></a>
+  </div>
+</main>
+
+<footer class="site-footer">
+  <div class="inner">
+    <span>Tugas Akhir · Departemen Teknik Komputer, Institut Teknologi Sepuluh Nopember</span>
+    <span>Halaman pendukung penelitian, bukan publikasi resmi.</span>
+  </div>
+</footer>
+</body>
+</html>

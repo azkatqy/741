@@ -1,0 +1,157 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Petunjuk · Robotaxi ITS</title>
+<meta name="description" content="Petunjuk menjalankan prototipe layanan penjemputan robotaxi ITS: instalasi, konfigurasi, skenario demo, parameter, dan penanganan masalah.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/style.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%236d4fd8'/%3E%3Ctext x='16' y='21' font-size='13' font-family='sans-serif' font-weight='700' fill='white' text-anchor='middle'%3ERT%3C/text%3E%3C/svg%3E">
+</head>
+<body>
+<header class="site-header">
+  <div class="inner">
+    <a class="brand" href="index.html"><span class="brand-mark">RT</span>Robotaxi ITS</a>
+    <nav class="nav" aria-label="Navigasi utama">
+      <a href="index.html">Beranda</a>
+      <a href="sistem.html">Sistem</a>
+      <a href="petunjuk.html" aria-current="page">Petunjuk</a>
+      <a href="pedoman.html">Pedoman</a>
+      <a href="referensi.html">Referensi</a>
+      <a href="galeri.html">Galeri</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <div class="eyebrow">Petunjuk</div>
+  <h1>Menjalankan prototipe</h1>
+  <p class="lead">Prototipe terdiri atas server, aplikasi penumpang, halaman monitor, dan simulator kendaraan. Simulator menggantikan <em>node</em> penghubung dan <em>node</em> deteksi ROS 2 dengan protokol WebSocket yang sama, sehingga seluruh alur bisa dicoba tanpa mobil riset.</p>
+  <div class="toc">
+    <a href="#prasyarat">Prasyarat</a>
+    <a href="#konfigurasi">Konfigurasi</a>
+    <a href="#menjalankan">Menjalankan</a>
+    <a href="#demo">Skenario demo</a>
+    <a href="#parameter">Parameter</a>
+    <a href="#tes">Tes otomatis</a>
+    <a href="#masalah">Masalah umum</a>
+  </div>
+
+  <div class="callout warn">
+    <p>Kode prototipe disimpan di repositori terpisah. Halaman ini hanya berisi petunjuk penggunaannya.</p>
+  </div>
+
+  <h2 id="prasyarat">Prasyarat</h2>
+  <ul class="clean">
+    <li>Python 3.10 atau lebih baru.</li>
+    <li>Kunci API Google Gemini atau OpenRouter untuk agen percakapan dan VLM.</li>
+    <li>Opsional: GPU yang didukung PyTorch. Tanpa GPU, YOLO-World berjalan di CPU sekitar 0,1 detik per <em>frame</em>.</li>
+  </ul>
+  <pre><code>cd robotaxi
+pip install --user -r requirements.txt</code></pre>
+
+  <h2 id="konfigurasi">Konfigurasi</h2>
+  <p>Salin <code>.env.example</code> menjadi <code>.env</code> di folder <code>robotaxi/</code>, lalu isi kunci API. Berkas <code>.env</code> diabaikan oleh git, jadi jangan pernah menyalin kunci ke berkas lain yang ikut di-<em>commit</em>.</p>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Variabel</th><th>Fungsi</th></tr></thead>
+      <tbody>
+        <tr><td><code>LLM_PROVIDER</code></td><td><code>google</code> (Gemini API langsung) atau <code>openrouter</code></td></tr>
+        <tr><td><code>GOOGLE_API_KEY</code></td><td>Kunci Gemini API, dipakai bila penyedia <code>google</code></td></tr>
+        <tr><td><code>OPENROUTER_API_KEY</code></td><td>Kunci OpenRouter, dipakai bila penyedia <code>openrouter</code></td></tr>
+        <tr><td><code>GEMINI_CHAT_MODEL</code>, <code>GEMINI_VLM_MODEL</code></td><td>Nama model, misalnya <code>gemini-3.1-flash-lite</code>. Untuk OpenRouter otomatis diberi awalan <code>google/</code></td></tr>
+        <tr><td><code>VEHICLE_TOKEN</code></td><td>Token yang dipakai kendaraan atau simulator untuk tersambung ke server</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p>Penyedia dan model juga bisa diganti saat aplikasi berjalan lewat ikon pengaturan di halaman simulator. Model yang dipakai dicatat di setiap hasil identifikasi.</p>
+
+  <h2 id="menjalankan">Menjalankan</h2>
+  <pre><code>./run.sh</code></pre>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Halaman</th><th>Alamat</th></tr></thead>
+      <tbody>
+        <tr><td>Aplikasi penumpang</td><td><code>http://127.0.0.1:8900/app/</code> (buka dalam mode ponsel di peramban)</td></tr>
+        <tr><td>Simulator kendaraan</td><td><code>http://127.0.0.1:8901/</code></td></tr>
+        <tr><td>Monitor identifikasi</td><td><code>http://127.0.0.1:8900/monitor/</code></td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p>Titik jemput dan rute dibaca dari <code>server/seed.json</code>. Setelah mengubahnya, hapus <code>server/data/robotaxi.db</code> agar data dimuat ulang.</p>
+
+  <h2 id="demo">Skenario demo</h2>
+  <ol class="steps">
+    <li><strong>Siapkan kamera simulator.</strong>Tarik video atau foto ke slot kamera kiri, tengah, atau kanan, atau pilih "Pakai contoh…".</li>
+    <li><strong>Pesan dari aplikasi penumpang.</strong>Pilih titik jemput, tekan "Pesan Robotaxi", lalu ceritakan ciri Anda di tab Percakapan, misalnya pakaian atas beserta warnanya dan posisi Anda.</li>
+    <li><strong>Percepat perjalanan.</strong>Di simulator, naikkan kecepatan atau tekan "Langsung tiba".</li>
+    <li><strong>Kendaraan tiba.</strong>Bila ciri belum lengkap, status menjadi menunggu ciri dan VLM belum dipanggil. Bila sudah lengkap, status menjadi mencari dan VLM diperiksa setiap 3 detik.</li>
+    <li><strong>Periksa foto bukti.</strong>Bila VLM menemukan kandidat, foto dengan kotak hijau dikirim ke percakapan. Jawab "Ya, itu saya" untuk mengonfirmasi atau "Bukan saya" agar agen menanyakan ciri pembeda.</li>
+    <li><strong>Selesaikan.</strong>Setelah naik, tekan "Saya sudah di kendaraan". Pesanan ditutup dan deteksi dihentikan.</li>
+  </ol>
+  <div class="callout ok">
+    <p>Untuk menguji jalur cadangan, tekan "Minta foto kamera" setelah kendaraan tiba, lalu pilih nomor diri Anda pada foto. Untuk menguji status <code>OFFLINE</code>, tekan "Putuskan koneksi" di simulator.</p>
+  </div>
+
+  <h2 id="parameter">Parameter yang bisa diatur</h2>
+  <p>Semua parameter bisa diubah di <code>.env</code> atau dari ikon pengaturan simulator. Perubahan dari panel berlaku sampai proses dimulai ulang.</p>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Parameter</th><th class="num">Bawaan</th><th>Arti</th></tr></thead>
+      <tbody>
+        <tr><td><code>T_CEK_CARI</code></td><td class="num">3 s</td><td>Jeda pemeriksaan VLM saat mencari, dihitung dari selesainya panggilan sebelumnya</td></tr>
+        <tr><td><code>T_CEK_DITEMUKAN</code></td><td class="num">15 s</td><td>Jeda pemeriksaan setelah kandidat ditemukan</td></tr>
+        <tr><td><code>T_TIDAK</code></td><td class="num">30 s</td><td>Lama VLM tidak menemukan kandidat sebelum agen meminta ciri tambahan</td></tr>
+        <tr><td><code>N_HILANG</code></td><td class="num">3</td><td>Jumlah jawaban "tidak ada" berturut-turut setelah ditemukan sebelum penumpang dianggap hilang dan pencarian diulang</td></tr>
+        <tr><td><code>T_MAKS_KIRIM</code></td><td class="num">60 s</td><td>Batas kendaraan merespons perintah jemput</td></tr>
+        <tr><td><code>T_MAKS_TUNGGU_CIRI</code></td><td class="num">300 s</td><td>Batas melengkapi ciri setelah kendaraan tiba</td></tr>
+        <tr><td><code>T_MAKS_CARI</code></td><td class="num">300 s</td><td>Batas pencarian sejak dimulai</td></tr>
+        <tr><td><code>T_MAKS_OFFLINE</code></td><td class="num">120 s</td><td>Batas kendaraan terputus</td></tr>
+        <tr><td><code>T_FRAME_BASI</code></td><td class="num">5 s</td><td><em>Frame</em> yang lebih tua tidak dipakai untuk pemeriksaan VLM</td></tr>
+        <tr><td><code>IOU_DITOLAK</code></td><td class="num">0,5</td><td>Ambang tumpang tindih untuk tidak mengirim ulang kandidat yang sudah ditolak</td></tr>
+        <tr><td><code>TANDAI_KANDIDAT</code></td><td class="num">true</td><td>Beri kotak dan nomor pada setiap orang di citra VLM</td></tr>
+        <tr><td><code>YOLO_CONF</code></td><td class="num">0,25</td><td>Ambang keyakinan deteksi orang di simulator</td></tr>
+        <tr><td><code>KUALITAS_JPEG</code>, <code>LEBAR_MAKS</code></td><td class="num">85, 960</td><td>Kompresi dan lebar maksimum citra yang dikirim kendaraan</td></tr>
+        <tr><td><code>SPEED_MPS</code></td><td class="num">5</td><td>Kecepatan kendaraan simulasi</td></tr>
+        <tr><td><code>T_POSISI</code>, <code>T_KIRIM_FRAME</code>, <code>T_HEARTBEAT</code></td><td class="num">1, 1, 2 s</td><td>Interval kirim posisi, <em>frame</em>, dan sinyal detak</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2 id="tes">Tes otomatis</h2>
+  <pre><code>cd server
+python3 -m pytest -q tests</code></pre>
+  <p>Tes mencakup transisi status, penyaring halusinasi, aturan kelengkapan ciri, penggabungan panel kamera, logika keputusan VLM, batas waktu, dan alur lengkap dengan model serta kendaraan tiruan.</p>
+
+  <h2 id="masalah">Masalah umum</h2>
+  <div class="grid two">
+    <div class="card">
+      <h3>"Maaf, saya sedang kesulitan memproses pesan Anda"</h3>
+      <p>Panggilan ke LLM gagal. Periksa apakah kunci API sudah diisi, penyedianya sesuai <code>LLM_PROVIDER</code>, dan nama modelnya tersedia. Baris kosong seperti <code>GOOGLE_API_KEY=</code> diabaikan, jadi isi nilainya atau hapus barisnya.</p>
+    </div>
+    <div class="card">
+      <h3>VLM tidak pernah dipanggil</h3>
+      <p>Biasanya ciri belum lengkap, sehingga status tertahan di menunggu ciri. Pastikan pakaian atas beserta warnanya dan posisi sudah disebut. Lihat juga Log VLM di simulator.</p>
+    </div>
+    <div class="card">
+      <h3>Peta tidak tampil</h3>
+      <p>Aplikasi memakai ubin OpenStreetMap. Pastikan peramban bisa mengakses internet.</p>
+    </div>
+    <div class="card">
+      <h3>Titik jemput lama masih muncul</h3>
+      <p>Hapus <code>server/data/robotaxi.db</code> lalu jalankan ulang agar <code>seed.json</code> dimuat ulang.</p>
+    </div>
+  </div>
+</main>
+
+<footer class="site-footer">
+  <div class="inner">
+    <span>Tugas Akhir · Departemen Teknik Komputer, Institut Teknologi Sepuluh Nopember</span>
+    <span>Halaman pendukung penelitian, bukan publikasi resmi.</span>
+  </div>
+</footer>
+</body>
+</html>

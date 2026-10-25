@@ -1,0 +1,218 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Desain Sistem · Robotaxi ITS</title>
+<meta name="description" content="Arsitektur, alur interaksi, status pesanan, integrasi navigasi, dan basis data sistem layanan penjemputan robotaxi ITS.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/style.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%236d4fd8'/%3E%3Ctext x='16' y='21' font-size='13' font-family='sans-serif' font-weight='700' fill='white' text-anchor='middle'%3ERT%3C/text%3E%3C/svg%3E">
+</head>
+<body>
+<header class="site-header">
+  <div class="inner">
+    <a class="brand" href="index.html"><span class="brand-mark">RT</span>Robotaxi ITS</a>
+    <nav class="nav" aria-label="Navigasi utama">
+      <a href="index.html">Beranda</a>
+      <a href="sistem.html" aria-current="page">Sistem</a>
+      <a href="petunjuk.html">Petunjuk</a>
+      <a href="pedoman.html">Pedoman</a>
+      <a href="referensi.html">Referensi</a>
+      <a href="galeri.html">Galeri</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <div class="eyebrow">Desain sistem</div>
+  <h1>Bagaimana sistem bekerja</h1>
+  <p class="lead">Sistem terdiri atas aplikasi penumpang, server, layanan LLM dan VLM, serta dua <em>node</em> ROS 2 pada komputer kendaraan. Navigasi dan kendali memakai sistem yang sudah ada pada mobil riset otonom ITS tanpa perubahan algoritma.</p>
+  <div class="toc">
+    <a href="#arsitektur">Arsitektur</a>
+    <a href="#alur">Alur 19 langkah</a>
+    <a href="#status">Status pesanan</a>
+    <a href="#navigasi">Integrasi navigasi</a>
+    <a href="#vlm">Pencocokan VLM</a>
+    <a href="#basis-data">Basis data</a>
+  </div>
+
+  <h2 id="arsitektur">Arsitektur</h2>
+  <figure class="diagram">
+    <svg viewBox="0 0 920 335" role="img" aria-label="Diagram arsitektur sistem">
+      <defs>
+        <marker id="a1" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" class="head"/></marker>
+      </defs>
+      <rect class="box accent" x="20" y="130" width="170" height="90" rx="12"/>
+      <text x="105" y="168" text-anchor="middle" font-weight="700">Aplikasi Penumpang</text>
+      <text x="105" y="190" text-anchor="middle" font-size="12" class="muted">web mobile-first + peta</text>
+
+      <rect class="box accent" x="330" y="110" width="210" height="130" rx="12"/>
+      <text x="435" y="142" text-anchor="middle" font-weight="700">Server (FastAPI)</text>
+      <text x="435" y="166" text-anchor="middle" font-size="12" class="muted">pesanan · status · percakapan</text>
+      <text x="435" y="184" text-anchor="middle" font-size="12" class="muted">penyaring halusinasi</text>
+      <text x="435" y="202" text-anchor="middle" font-size="12" class="muted">penjadwal pemeriksaan VLM</text>
+      <text x="435" y="222" text-anchor="middle" font-size="12" class="muted">basis data + berkas citra</text>
+
+      <rect class="box" x="335" y="10" width="200" height="60" rx="12"/>
+      <text x="435" y="36" text-anchor="middle" font-weight="700">LLM / VLM</text>
+      <text x="435" y="56" text-anchor="middle" font-size="12" class="muted">Gemini API / OpenRouter</text>
+
+      <rect class="box" x="650" y="40" width="250" height="290" rx="14" stroke-dasharray="6 5"/>
+      <text x="780" y="64" text-anchor="middle" font-size="12" class="muted">Komputer kendaraan (ROS 2)</text>
+      <rect class="box accent" x="680" y="80" width="200" height="60" rx="10"/>
+      <text x="780" y="106" text-anchor="middle" font-weight="700">Node Penghubung</text>
+      <text x="780" y="126" text-anchor="middle" font-size="12" class="muted">WebSocket ke server</text>
+      <rect class="box accent" x="680" y="160" width="200" height="60" rx="10"/>
+      <text x="780" y="186" text-anchor="middle" font-weight="700">Node Deteksi Orang</text>
+      <text x="780" y="206" text-anchor="middle" font-size="12" class="muted">YOLO, 3 kamera atap</text>
+      <rect class="box" x="680" y="240" width="200" height="60" rx="10"/>
+      <text x="780" y="266" text-anchor="middle" font-weight="700">Navigasi & Kendali</text>
+      <text x="780" y="286" text-anchor="middle" font-size="12" class="muted">sudah ada (Hernanda, Hafidzh)</text>
+
+      <path d="M192 175 L328 175" class="line" marker-start="url(#a1)" marker-end="url(#a1)"/>
+      <text x="260" y="165" text-anchor="middle" font-size="11" class="muted">REST + WebSocket</text>
+      <path d="M435 108 L435 72" class="line" marker-start="url(#a1)" marker-end="url(#a1)"/>
+      <text x="445" y="94" font-size="11" class="muted">JSON terstruktur</text>
+      <path d="M542 150 L678 110" class="line" marker-start="url(#a1)" marker-end="url(#a1)"/>
+      <text x="600" y="118" text-anchor="middle" font-size="11" class="muted">perintah · status</text>
+      <path d="M780 142 L780 158" class="line" marker-start="url(#a1)" marker-end="url(#a1)"/>
+      <path d="M678 104 L664 104 L664 270 L678 270" class="line" marker-start="url(#a1)" marker-end="url(#a1)"/>
+      <text x="780" y="320" text-anchor="middle" font-size="11" class="muted">destinasi · posisi · perintah berhenti</text>
+    </svg>
+    <figcaption>Komponen utama. Garis putus-putus menandai perangkat lunak yang berjalan di komputer kendaraan.</figcaption>
+  </figure>
+
+  <div class="grid three" style="margin-top:1rem">
+    <div class="card"><h3>Aplikasi penumpang</h3><p>Memilih titik jemput, memesan, bercakap dengan agen, memantau kendaraan di peta, dan menjawab foto bukti.</p></div>
+    <div class="card"><h3>Server</h3><p>Mengelola pesanan dan status, meneruskan percakapan ke LLM, menyaring ciri yang tidak pernah diucapkan, dan menjadwalkan pemeriksaan VLM.</p></div>
+    <div class="card"><h3>Node penghubung</h3><p>Menetapkan titik jemput sebagai destinasi, mengirim posisi berkala, mendeteksi kedatangan, meminta kendaraan berhenti, lalu mengaktifkan deteksi.</p></div>
+    <div class="card"><h3>Node deteksi orang</h3><p>Penyaring awal di sisi kendaraan. Hanya aktif setelah kendaraan tiba, dan hanya mengirim citra berisi orang beserta kotak pembatasnya.</p></div>
+  </div>
+
+  <h2 id="alur">Alur interaksi 19 langkah</h2>
+  <div class="phase">
+    <span class="phase-head">Fase 1 · Pemesanan dan pengumpulan ciri</span>
+    <ol class="seq">
+      <li><span class="n">1</span><span>Penumpang mengirim pesanan dan titik jemput. <span class="who">aplikasi → server</span></span></li>
+      <li><span class="n">2</span><span>Perintah jemput beserta koordinat titik jemput. <span class="who">server → kendaraan</span></span></li>
+      <li><span class="n">3</span><span>Status: menuju titik jemput. <span class="who">kendaraan → server</span></span></li>
+      <li><span class="n">4</span><span>Status kendaraan diteruskan. <span class="who">server → aplikasi</span></span></li>
+      <li><span class="n">5</span><span>Posisi kendaraan secara berkala. <span class="who">kendaraan → server</span></span></li>
+      <li><span class="n">6</span><span>Perbarui posisi pada peta. <span class="who">server → aplikasi</span></span></li>
+      <li><span class="n">7</span><span>Pesan berisi ciri penumpang. <span class="who">aplikasi → server</span></span></li>
+      <li><span class="n">8</span><span>Riwayat dan konteks sistem. <span class="who">server → LLM</span></span></li>
+      <li><span class="n">9</span><span>Balasan dan ekstraksi ciri dalam JSON. <span class="who">LLM → server</span></span></li>
+      <li><span class="n">10</span><span>Balasan agen setelah disaring. Diulang sampai ciri wajib lengkap. <span class="who">server → aplikasi</span></span></li>
+    </ol>
+  </div>
+  <div class="phase">
+    <span class="phase-head">Fase 2 · Kedatangan dan identifikasi visual</span>
+    <ol class="seq">
+      <li><span class="n">11</span><span>Status: tiba dan berhenti. <span class="who">kendaraan → server</span></span></li>
+      <li><span class="n">12</span><span>Status: mencari penumpang. <span class="who">server → aplikasi</span></span></li>
+      <li><span class="n">13</span><span>Citra dan kotak kandidat dari detektor YOLO. <span class="who">kendaraan → server</span></span></li>
+      <li><span class="n">14</span><span>Citra kandidat bernomor dan ringkasan ciri. <span class="who">server → VLM</span></span></li>
+      <li><span class="n">15</span><span>Keputusan, nomor kandidat, dan alasan. <span class="who">VLM → server</span></span></li>
+    </ol>
+  </div>
+  <div class="phase">
+    <span class="phase-head">Fase 3 · Konfirmasi dan penyelesaian</span>
+    <ol class="seq">
+      <li><span class="n">16</span><span>Status ditemukan dan foto bukti dengan kotak hijau. <span class="who">server → aplikasi</span></span></li>
+      <li><span class="n">17</span><span>Jawaban foto: "Ya, itu saya" atau "Bukan saya". <span class="who">aplikasi → server</span></span></li>
+      <li><span class="n">18</span><span>Konfirmasi penumpang sudah di kendaraan. <span class="who">aplikasi → server</span></span></li>
+      <li><span class="n">19</span><span>Perintah hentikan deteksi. <span class="who">server → kendaraan</span></span></li>
+    </ol>
+  </div>
+  <div class="callout">
+    <p>Selain menunggu hasil VLM, penumpang dapat meminta foto kamera kapan saja setelah kendaraan tiba. Setiap orang di foto diberi nomor, sehingga penumpang bisa memilih nomor dirinya sendiri dan pesanan langsung terkonfirmasi.</p>
+  </div>
+
+  <h2 id="status">Status pesanan</h2>
+  <p>Alur normal:</p>
+  <div class="flow">
+    <span class="chip">DIBUAT</span><span class="arrow">→</span>
+    <span class="chip">DIKIRIM</span><span class="arrow">→</span>
+    <span class="chip">MENUJU_TITIK</span><span class="arrow">→</span>
+    <span class="chip accent">MENCARI</span><span class="arrow">→</span>
+    <span class="chip accent">DITEMUKAN</span><span class="arrow">→</span>
+    <span class="chip ok">TERKONFIRMASI</span><span class="arrow">→</span>
+    <span class="chip ok">SELESAI</span>
+  </div>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Status</th><th>Kapan terjadi</th></tr></thead>
+      <tbody>
+        <tr><td><code>MENUNGGU_CIRI</code></td><td>Kendaraan sudah tiba, tetapi ciri wajib belum lengkap. Citra tetap disimpan, VLM belum dipanggil.</td></tr>
+        <tr><td><code>MENCARI</code></td><td>Ciri lengkap dan kendaraan sudah tiba. VLM diperiksa setiap 3 detik, dihitung dari selesainya panggilan sebelumnya.</td></tr>
+        <tr><td><code>DITEMUKAN</code></td><td>VLM menunjuk tepat satu kandidat. Foto bukti dikirim, jeda pemeriksaan diperpanjang menjadi 15 detik.</td></tr>
+        <tr><td><code>BUTUH_CIRI_TAMBAHAN</code></td><td>Penumpang menjawab "Bukan saya", atau VLM tidak menemukan kandidat selama 30 detik. Agen menanyakan ciri pembeda.</td></tr>
+        <tr><td><code>TERKONFIRMASI</code></td><td>Penumpang membenarkan foto bukti atau memilih nomornya sendiri. VLM berhenti dipanggil.</td></tr>
+        <tr><td><code>GAGAL</code></td><td>Batas waktu tahap terlewati, misalnya kendaraan tidak merespons 60 detik atau pencarian melebihi 300 detik.</td></tr>
+        <tr><td><code>DIBATALKAN</code></td><td>Penumpang membatalkan pesanan.</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p>Status kendaraan: <code>SIAGA</code>, <code>MENUJU_TITIK</code>, <code>TIBA</code>, dan <code>OFFLINE</code>. Pesanan aktif gagal bila kendaraan <code>OFFLINE</code> lebih dari 120 detik.</p>
+
+  <h2 id="navigasi">Integrasi dengan navigasi kendaraan</h2>
+  <p>Penjemputan tidak mengubah navigasi atau kendali. Interaksinya hanya melalui tiga hal: menetapkan destinasi, membaca posisi, dan meminta berhenti.</p>
+  <ol class="steps">
+    <li><strong>Titik awal tidak perlu dikirim.</strong>Perencana rute global mencocokkan posisi kendaraan saat itu ke segmen terdekat (jarak dan arah hadap), lalu mencari urutan segmen ke tujuan dengan algoritma Dijkstra.</li>
+    <li><strong>Titik akhir berupa koordinat titik jemput.</strong>Segmen tujuan adalah segmen terdekat dari koordinat itu. Karena segmen titik acuan GPS disiapkan secara luring, titik jemput harus berada pada jalan yang sudah tercakup segmen.</li>
+    <li><strong>Posisi dari Kalman Filter.</strong>Estimasi posisi dalam koordinat lokal ENU dikonversi kembali ke lintang dan bujur memakai titik acuan GPS saat inisialisasi, lalu dikirim ke server untuk ditampilkan di peta.</li>
+    <li><strong>Kedatangan dengan jarak haversine.</strong>Kendaraan dianggap tiba bila jarak ke titik jemput lebih kecil dari radius kedatangan. Perencana rute bawaan memakai ambang 5 m.</li>
+    <li><strong>Berhenti sebelum mendeteksi.</strong>Kecepatan target nol membuat kendaraan mengerem hingga berhenti penuh. Deteksi baru dijalankan setelah itu agar citra tidak kabur dan posisi orang tidak berubah di antara dua panggilan VLM.</li>
+  </ol>
+  <div class="callout warn">
+    <p>Saluran resmi untuk mengirim kecepatan nol ke sistem kendali masih perlu dipastikan bersama tim mobil riset sebelum uji lapangan. Tahap ini menyangkut keselamatan.</p>
+  </div>
+
+  <h2 id="vlm">Pencocokan VLM</h2>
+  <div class="grid two">
+    <div class="card">
+      <h3>Satu panggilan untuk semua kandidat</h3>
+      <p>Setiap orang hasil YOLO diberi kotak dan nomor. VLM menerima satu citra berisi seluruh kandidat beserta ringkasan ciri, lalu menjawab keputusan, nomor kandidat, dan alasannya dalam JSON terstruktur.</p>
+    </div>
+    <div class="card">
+      <h3>Mode <em>masking</em> dan bingkai penuh</h3>
+      <p>Mode <em>masking</em> menghitamkan area di luar kotak kandidat tetapi mempertahankan posisi relatifnya. Mode bingkai penuh mengirim citra apa adanya, berguna bila ciri posisi bergantung pada objek sekitar.</p>
+    </div>
+    <div class="card">
+      <h3>Kandidat yang sudah ditolak</h3>
+      <p>Orang yang dijawab "Bukan saya" tidak dikirim lagi bila masih di tempat yang sama (kotak tumpang tindih ≥ 0,5). Bila sudah berpindah, deskripsinya dikirim sebagai orang yang bukan penumpang.</p>
+    </div>
+    <div class="card">
+      <h3>Mengapa tidak memakai skor kemiripan</h3>
+      <p>Pada uji metode rujukan, kandidat berjaket hitam mendapat skor 0,88 sedangkan kandidat berjaket merah 0,83 untuk deskripsi "jaket merah". Karena itu penelitian ini meminta VLM menalar semua kandidat secara langsung.</p>
+    </div>
+  </div>
+
+  <h2 id="basis-data">Basis data</h2>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Tabel</th><th>Isi utama</th></tr></thead>
+      <tbody>
+        <tr><td><code>titik_jemput</code></td><td>Nama dan patokan lokasi, koordinat pada segmen jalan kendaraan, identitas destinasi, radius kedatangan</td></tr>
+        <tr><td><code>pesanan</code></td><td>Titik jemput, status, cap waktu dibuat, tiba, ditemukan, dan selesai</td></tr>
+        <tr><td><code>pesan_percakapan</code></td><td>Riwayat percakapan, lampiran foto, kandidat bernomor, nomor yang dipilih</td></tr>
+        <tr><td><code>ciri_penumpang</code></td><td>Pakaian atas, pakaian bawah, aksesori, posisi, ringkasan, status lengkap, nomor versi</td></tr>
+        <tr><td><code>hasil_identifikasi</code></td><td>Mode gambar, jalur citra, kandidat, keputusan, nomor orang, alasan, model, latensi</td></tr>
+        <tr><td><code>log_status</code></td><td>Setiap perubahan status pesanan dan kendaraan</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p>Berkas citra disimpan di sistem berkas server. Basis data hanya menyimpan jalurnya agar tetap ringan.</p>
+</main>
+
+<footer class="site-footer">
+  <div class="inner">
+    <span>Tugas Akhir · Departemen Teknik Komputer, Institut Teknologi Sepuluh Nopember</span>
+    <span>Halaman pendukung penelitian, bukan publikasi resmi.</span>
+  </div>
+</footer>
+</body>
+</html>

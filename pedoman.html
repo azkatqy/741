@@ -1,0 +1,173 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pedoman · Robotaxi ITS</title>
+<meta name="description" content="Pedoman ciri penumpang, penempatan titik jemput, pengujian, privasi, dan penulisan proposal penelitian robotaxi ITS.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/style.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%236d4fd8'/%3E%3Ctext x='16' y='21' font-size='13' font-family='sans-serif' font-weight='700' fill='white' text-anchor='middle'%3ERT%3C/text%3E%3C/svg%3E">
+</head>
+<body>
+<header class="site-header">
+  <div class="inner">
+    <a class="brand" href="index.html"><span class="brand-mark">RT</span>Robotaxi ITS</a>
+    <nav class="nav" aria-label="Navigasi utama">
+      <a href="index.html">Beranda</a>
+      <a href="sistem.html">Sistem</a>
+      <a href="petunjuk.html">Petunjuk</a>
+      <a href="pedoman.html" aria-current="page">Pedoman</a>
+      <a href="referensi.html">Referensi</a>
+      <a href="galeri.html">Galeri</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <div class="eyebrow">Pedoman</div>
+  <h1>Pedoman penelitian</h1>
+  <p class="lead">Aturan yang dipakai saat menyampaikan ciri penumpang, menempatkan titik jemput, menyusun pengujian, menjaga privasi, dan menulis proposal.</p>
+  <div class="toc">
+    <a href="#ciri">Ciri penumpang</a>
+    <a href="#titik-jemput">Titik jemput</a>
+    <a href="#pengujian">Pengujian</a>
+    <a href="#privasi">Privasi</a>
+    <a href="#penulisan">Penulisan proposal</a>
+    <a href="#istilah">Istilah</a>
+  </div>
+
+  <h2 id="ciri">Ciri penumpang</h2>
+  <p>Agen percakapan terus bertanya sampai ciri wajib lengkap. VLM baru dipanggil setelah itu.</p>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Ciri</th><th>Sifat</th><th>Contoh</th></tr></thead>
+      <tbody>
+        <tr><td>Pakaian atas beserta warnanya</td><td><span class="pill accent">wajib</span></td><td>"kaos hijau", "kemeja putih lengan panjang", "jaket gelap"</td></tr>
+        <tr><td>Posisi terhadap objek sekitar</td><td><span class="pill accent">wajib</span></td><td>"duduk di bangku dekat pintu masuk", "berdiri di sebelah kiri halte"</td></tr>
+        <tr><td>Pakaian bawah</td><td><span class="pill">pendukung</span></td><td>"celana jeans biru", "rok hitam"</td></tr>
+        <tr><td>Aksesori</td><td><span class="pill">pendukung</span></td><td>"tas ransel merah", "topi", "hijab abu-abu"</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="do-dont">
+    <div class="card do">
+      <h3>Membantu pencocokan</h3>
+      <ul class="clean">
+        <li>Sebut warna yang terlihat dari jauh</li>
+        <li>Sebut patokan yang juga terlihat oleh kamera kendaraan</li>
+        <li>Koreksi ciri bila ada yang salah, misalnya "bukan merah, hijau"</li>
+        <li>Sebut ciri pembeda bila ada orang lain berpakaian mirip</li>
+      </ul>
+    </div>
+    <div class="card dont">
+      <h3>Tidak dipakai</h3>
+      <ul class="clean">
+        <li>Ciri wajah, tinggi badan, atau ciri biometrik lain</li>
+        <li>Ciri yang tidak terlihat, misalnya "saya mahasiswa Teknik Komputer"</li>
+        <li>Ciri yang ditambahkan model sendiri. Server menyaring detail yang tidak pernah diucapkan penumpang</li>
+      </ul>
+    </div>
+  </div>
+
+  <h2 id="titik-jemput">Penempatan titik jemput</h2>
+  <ul class="clean">
+    <li>Titik jemput berada pada jalan yang sudah tercakup segmen titik acuan GPS kendaraan, karena kendaraan hanya bisa melewati segmen tersebut.</li>
+    <li>Area tunggu penumpang berada dalam sudut pandang kamera kiri, tengah, atau kanan saat kendaraan berhenti. Kendaraan tidak memiliki kamera belakang.</li>
+    <li>Pilih patokan yang mudah disebut, seperti halte, pintu masuk, atau bangku.</li>
+    <li>Pertimbangkan galat GPS tanpa RTK. Kendaraan bisa berhenti beberapa meter dari koordinat titik jemput.</li>
+  </ul>
+
+  <h2 id="pengujian">Pengujian</h2>
+  <p>Penelitian ini menguji kinerja sistem, bukan persepsi pengguna. Skenario ditulis lebih dulu, lalu diperankan oleh penulis dan relawan.</p>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Aspek</th><th>Metrik</th></tr></thead>
+      <tbody>
+        <tr><td>Agen percakapan</td><td>Kelengkapan ekstraksi ciri, tingkat halusinasi (ciri yang tersimpan dibandingkan dengan ucapan penumpang)</td></tr>
+        <tr><td>Pencocokan VLM</td><td>Ketepatan kandidat yang ditunjuk pada mode <em>masking</em> dan bingkai penuh, termasuk skenario orang berpenampilan mirip</td></tr>
+        <tr><td>Efisiensi</td><td>Latensi dan jumlah pemanggilan VLM per pesanan</td></tr>
+        <tr><td>Alur penjemputan</td><td>Keberhasilan dari pemesanan sampai penumpang terkonfirmasi, waktu dari kendaraan tiba sampai terkonfirmasi, ketepatan perubahan status</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="callout">
+    <p>Kondisi uji: siang hari, cuaca cerah, jumlah orang di sekitar titik jemput terbatas, dan koneksi jaringan stabil. Setiap skenario mencatat jumlah orang di kamera dan apakah ada orang lain yang berpakaian mirip.</p>
+  </div>
+
+  <h2 id="privasi">Privasi dan etika</h2>
+  <ul class="clean">
+    <li>Sistem tidak memakai pengenalan wajah maupun data biometrik. Validasi berfungsi sebagai pendukung penjemputan, bukan autentikasi keamanan.</li>
+    <li>Relawan diberi tahu bahwa citranya direkam oleh kamera kendaraan dan dikirim ke layanan VLM.</li>
+    <li>Citra disimpan di server penelitian. Hanya tangkapan layar tanpa wajah yang dapat dikenali yang dipakai untuk publikasi.</li>
+    <li>Kunci API disimpan di berkas <code>.env</code> yang tidak ikut di-<em>commit</em>.</li>
+  </ul>
+
+  <h2 id="penulisan">Penulisan proposal</h2>
+  <p>Gaya penulisan mengikuti template ITS dan proposal acuan pada departemen yang sama.</p>
+  <div class="grid two">
+    <div class="card">
+      <h3>Format</h3>
+      <ul class="clean">
+        <li>Template ITS, huruf Times 12 pt, A4, spasi tunggal</li>
+        <li>Margin atas dan kiri 30 mm, kanan 20 mm, bawah 25 mm</li>
+        <li>Sitasi IEEE bernomor, "et al." untuk penulis lebih dari dua</li>
+        <li>Keterangan gambar di bawah, tabel di atas, masing-masing dengan baris sumber</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>Panjang per bab</h3>
+      <ul class="clean">
+        <li>Bab 1 Pendahuluan: sekitar 3 halaman</li>
+        <li>Bab 2 Tinjauan Pustaka: 6 sampai 7 halaman</li>
+        <li>Bab 3 Metodologi: 10 sampai 11 halaman</li>
+        <li>Bab 4 Hasil yang Diharapkan: 3 sampai 4 halaman</li>
+        <li>Bab 5 Jadwal: 1 halaman</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>Bahasa</h3>
+      <ul class="clean">
+        <li>Bahasa Indonesia baku, sudut pandang impersonal ("penelitian ini", "sistem")</li>
+        <li>Istilah asing dicetak miring, singkatan diperkenalkan sekali</li>
+        <li>Kalimat rata-rata 20 sampai 25 kata, paragraf padat dengan satu topik</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>Dihindari</h3>
+      <ul class="clean">
+        <li>Tanda pisah panjang di dalam kalimat</li>
+        <li>Huruf tebal di dalam paragraf</li>
+        <li>Nama fungsi atau variabel kode di prosa Bab 1 sampai 3</li>
+        <li>Frasa pembesar dan kalimat penutup yang hanya mengulang isi</li>
+      </ul>
+    </div>
+  </div>
+
+  <h2 id="istilah">Istilah yang dipakai</h2>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Gunakan</th><th>Arti</th><th>Hindari</th></tr></thead>
+      <tbody>
+        <tr><td>Deteksi orang</td><td>Menemukan keberadaan manusia pada citra dengan YOLO, tanpa mengetahui identitasnya</td><td>identifikasi</td></tr>
+        <tr><td>Pencocokan</td><td>Membandingkan setiap kandidat bernomor dengan ciri penumpang menggunakan VLM</td><td>identifikasi</td></tr>
+        <tr><td>Validasi identifikasi</td><td>Keputusan akhir dari pencocokan VLM ditambah konfirmasi penumpang terhadap foto bukti</td><td>autentikasi</td></tr>
+        <tr><td>Ciri penumpang</td><td>Pakaian, aksesori, dan posisi yang disampaikan penumpang</td><td>atribut, fitur</td></tr>
+        <tr><td>Foto bukti</td><td>Citra kamera kendaraan dengan kotak hijau pada kandidat terpilih</td><td>snapshot</td></tr>
+        <tr><td>Titik jemput</td><td>Lokasi tetap yang dipilih penumpang di kampus</td><td>pickup point</td></tr>
+        <tr><td>Agen percakapan</td><td>Asisten berbasis LLM yang mengumpulkan ciri penumpang</td><td>chatbot, bot</td></tr>
+      </tbody>
+    </table>
+  </div>
+</main>
+
+<footer class="site-footer">
+  <div class="inner">
+    <span>Tugas Akhir · Departemen Teknik Komputer, Institut Teknologi Sepuluh Nopember</span>
+    <span>Halaman pendukung penelitian, bukan publikasi resmi.</span>
+  </div>
+</footer>
+</body>
+</html>
